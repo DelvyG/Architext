@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type Props = {
@@ -16,14 +17,20 @@ export default async function SettingsPage({ params }: Props) {
       <Tabs defaultValue="profile">
         <TabsList>
           <TabsTrigger value="profile">{t("profile")}</TabsTrigger>
-          <TabsTrigger value="api-keys">{t("apiKeys")}</TabsTrigger>
+          <TabsTrigger value="api-keys">
+            <Link href="/settings/api-keys">{t("apiKeys")}</Link>
+          </TabsTrigger>
           <TabsTrigger value="account">{t("account")}</TabsTrigger>
         </TabsList>
         <TabsContent value="profile" className="mt-6">
           <p className="text-muted-foreground">{t("comingSoon")}</p>
         </TabsContent>
         <TabsContent value="api-keys" className="mt-6">
-          <p className="text-muted-foreground">{t("comingSoon")}</p>
+          <p className="text-muted-foreground">
+            <Link href="/settings/api-keys" className="text-primary underline">
+              {t("apiKeys")}
+            </Link>
+          </p>
         </TabsContent>
         <TabsContent value="account" className="mt-6">
           <p className="text-muted-foreground">{t("comingSoon")}</p>

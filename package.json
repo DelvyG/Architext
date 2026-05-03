@@ -11,8 +11,12 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.74",
+    "@ai-sdk/google": "^3.0.67",
+    "@ai-sdk/openai": "^3.0.58",
     "@base-ui/react": "^1.4.1",
     "@prisma/client": "^6.19.3",
+    "ai": "^6.0.174",
     "better-auth": "^1.6.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
