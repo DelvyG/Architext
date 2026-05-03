@@ -2,5 +2,76 @@
   "app": {
     "title": "Architext",
     "description": "Design your software architecture visually before coding with AI"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Enter your credentials to continue",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "signupLink": "Sign up",
+      "forgotPassword": "Forgot password?",
+      "error": "Invalid email or password"
+    },
+    "signup": {
+      "title": "Create account",
+      "subtitle": "Start designing your architecture",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "At least 8 characters",
+      "submit": "Create account",
+      "hasAccount": "Already have an account?",
+      "loginLink": "Sign in",
+      "error": "Could not create account"
+    },
+    "signOut": "Sign out"
+  },
+  "dashboard": {
+    "header": {
+      "projects": "Projects",
+      "settings": "Settings"
+    },
+    "projects": {
+      "title": "Projects",
+      "empty": "No projects yet",
+      "emptyDescription": "Create your first project to start designing architecture.",
+      "newProject": "New project",
+      "updated": "Updated {date}",
+      "deleteConfirm": "Are you sure you want to delete this project?",
+      "deleteDescription": "This action cannot be undone.",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "rename": "Rename"
+    },
+    "newProject": {
+      "title": "New project",
+      "name": "Project name",
+      "namePlaceholder": "My awesome project",
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Brief description of what you want to build",
+      "language": "Project language",
+      "languageHint": "Language used for AI-generated architecture and exports",
+      "template": "Start from template",
+      "templateBlank": "Blank project",
+      "templateComingSoon": "Coming soon",
+      "create": "Create project",
+      "creating": "Creating..."
+    },
+    "settings": {
+      "title": "Settings",
+      "profile": "Profile",
+      "apiKeys": "API Keys",
+      "account": "Account",
+      "comingSoon": "Coming soon"
+    }
+  },
+  "project": {
+    "editor": {
+      "title": "Project: {name}",
+      "backToProjects": "Projects"
+    }
   }
 }

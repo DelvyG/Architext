@@ -2,5 +2,76 @@
   "app": {
     "title": "Architext",
     "description": "Diseña tu arquitectura de software visualmente antes de codear con IA"
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "subtitle": "Ingresa tus credenciales para continuar",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "signupLink": "Regístrate",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "error": "Email o contraseña inválidos"
+    },
+    "signup": {
+      "title": "Crear cuenta",
+      "subtitle": "Empieza a diseñar tu arquitectura",
+      "name": "Nombre",
+      "email": "Email",
+      "password": "Contraseña",
+      "passwordHint": "Al menos 8 caracteres",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "loginLink": "Inicia sesión",
+      "error": "No se pudo crear la cuenta"
+    },
+    "signOut": "Cerrar sesión"
+  },
+  "dashboard": {
+    "header": {
+      "projects": "Proyectos",
+      "settings": "Configuración"
+    },
+    "projects": {
+      "title": "Proyectos",
+      "empty": "Aún no hay proyectos",
+      "emptyDescription": "Crea tu primer proyecto para empezar a diseñar arquitectura.",
+      "newProject": "Nuevo proyecto",
+      "updated": "Actualizado {date}",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar este proyecto?",
+      "deleteDescription": "Esta acción no se puede deshacer.",
+      "delete": "Eliminar",
+      "cancel": "Cancelar",
+      "rename": "Renombrar"
+    },
+    "newProject": {
+      "title": "Nuevo proyecto",
+      "name": "Nombre del proyecto",
+      "namePlaceholder": "Mi proyecto increíble",
+      "description": "Descripción (opcional)",
+      "descriptionPlaceholder": "Breve descripción de lo que quieres construir",
+      "language": "Idioma del proyecto",
+      "languageHint": "Idioma usado para la arquitectura generada por IA y los exports",
+      "template": "Comenzar desde plantilla",
+      "templateBlank": "Proyecto vacío",
+      "templateComingSoon": "Próximamente",
+      "create": "Crear proyecto",
+      "creating": "Creando..."
+    },
+    "settings": {
+      "title": "Configuración",
+      "profile": "Perfil",
+      "apiKeys": "Claves API",
+      "account": "Cuenta",
+      "comingSoon": "Próximamente"
+    }
+  },
+  "project": {
+    "editor": {
+      "title": "Proyecto: {name}",
+      "backToProjects": "Proyectos"
+    }
   }
 }
