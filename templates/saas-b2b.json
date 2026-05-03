@@ -1,0 +1,127 @@
+{
+  "slug": "saas-b2b",
+  "name": { "en": "B2B SaaS", "es": "SaaS B2B" },
+  "description": {
+    "en": "Multi-tenant SaaS with organizations, users, billing, and dashboards",
+    "es": "SaaS multi-tenant con organizaciones, usuarios, facturación y dashboards"
+  },
+  "suggestedStack": {
+    "frontend": "Next.js",
+    "backend": "Next.js API Routes",
+    "db": "PostgreSQL",
+    "hosting": "Vercel / Docker"
+  },
+  "canvas": {
+    "nodes": [
+      {
+        "id": "org-model",
+        "type": "DataModel",
+        "position": { "x": 100, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "Organization",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true },
+            { "name": "slug", "type": "string", "required": true, "unique": true },
+            { "name": "plan", "type": "string", "required": true }
+          ],
+          "relations": []
+        }
+      },
+      {
+        "id": "user-model",
+        "type": "DataModel",
+        "position": { "x": 400, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "User",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "email", "type": "email", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true },
+            { "name": "role", "type": "string", "required": true }
+          ],
+          "relations": [{ "target": "Organization", "type": "many-to-many" }]
+        }
+      },
+      {
+        "id": "auth-block",
+        "type": "Auth",
+        "position": { "x": 250, "y": 300 },
+        "data": {
+          "blockType": "Auth",
+          "method": "email-password",
+          "roles": ["owner", "admin", "member"],
+          "protects": []
+        }
+      },
+      {
+        "id": "dashboard-view",
+        "type": "View",
+        "position": { "x": 100, "y": 450 },
+        "data": {
+          "blockType": "View",
+          "name": "Dashboard",
+          "route": "/dashboard",
+          "consumesEndpoints": [],
+          "description": "Main dashboard with metrics"
+        }
+      },
+      {
+        "id": "settings-view",
+        "type": "View",
+        "position": { "x": 400, "y": 450 },
+        "data": {
+          "blockType": "View",
+          "name": "Settings",
+          "route": "/settings",
+          "consumesEndpoints": []
+        }
+      },
+      {
+        "id": "api-users",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 600 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/users",
+          "auth": "required",
+          "consumedByViews": []
+        }
+      },
+      {
+        "id": "api-orgs",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 600 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/organizations",
+          "auth": "required",
+          "consumedByViews": []
+        }
+      },
+      {
+        "id": "stripe-integration",
+        "type": "Integration",
+        "position": { "x": 700, "y": 300 },
+        "data": {
+          "blockType": "Integration",
+          "service": "Stripe",
+          "purpose": "Subscription billing",
+          "usedIn": [],
+          "secretsNeeded": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e1", "source": "api-users", "target": "user-model", "type": "uses" },
+      { "id": "e2", "source": "api-orgs", "target": "org-model", "type": "uses" },
+      { "id": "e3", "source": "auth-block", "target": "api-users", "type": "protects" },
+      { "id": "e4", "source": "auth-block", "target": "dashboard-view", "type": "protects" },
+      { "id": "e5", "source": "dashboard-view", "target": "settings-view", "type": "navigatesTo" }
+    ]
+  }
+}

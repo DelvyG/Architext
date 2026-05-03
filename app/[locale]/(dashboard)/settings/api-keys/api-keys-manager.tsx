@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -14,15 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Separator } from "@/components/ui/separator";
 import { PROVIDERS, type ProviderId, PROVIDER_IDS } from "@/lib/ai/providers";
-import {
-  addApiKey,
-  setActiveApiKey,
-  deleteApiKey,
-  renameApiKey,
-  testApiKeyConnection,
-} from "./actions";
+import { addApiKey, setActiveApiKey, deleteApiKey, testApiKeyConnection } from "./actions";
 import { Check, Key, Plus, Trash2, Zap } from "lucide-react";
 
 type MaskedKey = {

@@ -3,6 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Canvas } from "@/components/canvas/Canvas";
 import { Inspector } from "@/components/inspector/Inspector";
@@ -54,6 +55,13 @@ export function ProjectEditor({ projectId, projectName, initialCanvas, initialMe
         </Link>
         <span className="text-sm text-muted-foreground">/</span>
         <h1 className="text-sm font-medium">{projectName}</h1>
+        <div className="ml-auto">
+          <Link href={`/projects/${projectId}/export`}>
+            <Button variant="outline" size="sm">
+              Export
+            </Button>
+          </Link>
+        </div>
       </header>
       <ResizablePanelGroup orientation="horizontal" className="flex-1">
         <ResizablePanel defaultSize={25} minSize={15}>

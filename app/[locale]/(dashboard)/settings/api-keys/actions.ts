@@ -3,7 +3,7 @@
 import { z } from "zod/v4";
 import { prisma } from "@/lib/db/client";
 import { requireSession } from "@/lib/auth/session";
-import { encryptKey, decryptKey } from "@/lib/crypto/api-keys";
+import { encryptKey } from "@/lib/crypto/api-keys";
 import { PROVIDER_IDS } from "@/lib/ai/providers";
 import { generateText } from "ai";
 import { getAIClient } from "@/lib/ai/client";
