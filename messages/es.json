@@ -1,7 +1,9 @@
 {
   "app": {
     "title": "Architext",
-    "description": "Diseña tu arquitectura de software visualmente antes de codear con IA"
+    "description": "Diseña tu arquitectura de software visualmente antes de codear con IA",
+    "getStarted": "Comenzar",
+    "signIn": "Iniciar sesión"
   },
   "auth": {
     "login": {

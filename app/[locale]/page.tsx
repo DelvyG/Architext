@@ -1,5 +1,7 @@
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -19,7 +21,17 @@ function Landing() {
     <div className="flex flex-1 items-center justify-center">
       <div className="text-center">
         <h1 className="text-4xl font-bold tracking-tight">{t("title")}</h1>
-        <p className="mt-2 text-muted-foreground">{t("description")}</p>
+        <p className="mt-3 text-lg text-muted-foreground">{t("description")}</p>
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <Link href="/signup">
+            <Button size="lg">{t("getStarted")}</Button>
+          </Link>
+          <Link href="/login">
+            <Button variant="outline" size="lg">
+              {t("signIn")}
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

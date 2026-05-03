@@ -1,7 +1,9 @@
 {
   "app": {
     "title": "Architext",
-    "description": "Design your software architecture visually before coding with AI"
+    "description": "Design your software architecture visually before coding with AI",
+    "getStarted": "Get started",
+    "signIn": "Sign in"
   },
   "auth": {
     "login": {
