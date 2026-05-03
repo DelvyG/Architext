@@ -21,6 +21,11 @@ export default async function ProjectEditorPage({ params }: Props) {
       name: true,
       canvas: true,
       language: true,
+      messages: {
+        orderBy: { createdAt: "asc" },
+        take: 50,
+        select: { role: true, content: true },
+      },
     },
   });
 
@@ -30,5 +35,12 @@ export default async function ProjectEditorPage({ params }: Props) {
 
   const canvas = project.canvas as { nodes: unknown[]; edges: unknown[] };
 
-  return <ProjectEditor projectId={project.id} projectName={project.name} initialCanvas={canvas} />;
+  return (
+    <ProjectEditor
+      projectId={project.id}
+      projectName={project.name}
+      initialCanvas={canvas}
+      initialMessages={project.messages}
+    />
+  );
 }

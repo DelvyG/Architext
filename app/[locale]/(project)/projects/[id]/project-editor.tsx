@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Canvas } from "@/components/canvas/Canvas";
 import { Inspector } from "@/components/inspector/Inspector";
+import { ChatPanel } from "@/components/chat/ChatPanel";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
 import { saveCanvas } from "./actions";
@@ -14,9 +15,10 @@ type Props = {
   projectId: string;
   projectName: string;
   initialCanvas: { nodes: unknown[]; edges: unknown[] };
+  initialMessages: { role: string; content: string }[];
 };
 
-export function ProjectEditor({ projectId, projectName, initialCanvas }: Props) {
+export function ProjectEditor({ projectId, projectName, initialCanvas, initialMessages }: Props) {
   const t = useTranslations("project.editor");
   const loadCanvas = useCanvasStore((s) => s.loadCanvas);
   const setIsSaving = useCanvasStore((s) => s.setIsSaving);
@@ -55,9 +57,7 @@ export function ProjectEditor({ projectId, projectName, initialCanvas }: Props) 
       </header>
       <ResizablePanelGroup orientation="horizontal" className="flex-1">
         <ResizablePanel defaultSize={25} minSize={15}>
-          <div className="flex h-full items-center justify-center p-4">
-            <p className="text-sm text-muted-foreground">Chat with AI — coming in next step</p>
-          </div>
+          <ChatPanel projectId={projectId} initialMessages={initialMessages} />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={55} minSize={30}>
