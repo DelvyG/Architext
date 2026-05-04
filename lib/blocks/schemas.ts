@@ -87,6 +87,52 @@ export const NoteDataSchema = z.object({
   content: z.string(),
 });
 
+export const SecurityDataSchema = z.object({
+  blockType: z.literal("Security"),
+  name: z.string().min(1),
+  policies: z.array(z.string()),
+  description: z.string().optional(),
+});
+
+export const CacheDataSchema = z.object({
+  blockType: z.literal("Cache"),
+  name: z.string().min(1),
+  strategy: z.enum(["redis", "in-memory", "cdn", "browser", "custom"]),
+  ttl: z.string().optional(),
+  description: z.string().optional(),
+});
+
+export const QueueDataSchema = z.object({
+  blockType: z.literal("Queue"),
+  name: z.string().min(1),
+  broker: z.string(),
+  events: z.array(z.string()),
+  description: z.string().optional(),
+});
+
+export const StorageDataSchema = z.object({
+  blockType: z.literal("Storage"),
+  name: z.string().min(1),
+  provider: z.string(),
+  fileTypes: z.array(z.string()),
+  maxSize: z.string().optional(),
+  description: z.string().optional(),
+});
+
+export const SEODataSchema = z.object({
+  blockType: z.literal("SEO"),
+  name: z.string().min(1),
+  strategies: z.array(z.string()),
+  description: z.string().optional(),
+});
+
+export const GroupDataSchema = z.object({
+  blockType: z.literal("Group"),
+  name: z.string().min(1),
+  color: z.string().optional(),
+  description: z.string().optional(),
+});
+
 // ─── Discriminated union ────────────────────────────────────────
 
 export const BlockDataSchema = z.discriminatedUnion("blockType", [
@@ -98,6 +144,12 @@ export const BlockDataSchema = z.discriminatedUnion("blockType", [
   AuthDataSchema,
   JobDataSchema,
   NoteDataSchema,
+  SecurityDataSchema,
+  CacheDataSchema,
+  QueueDataSchema,
+  StorageDataSchema,
+  SEODataSchema,
+  GroupDataSchema,
 ]);
 
 // ─── Canvas node & edge ─────────────────────────────────────────
@@ -111,6 +163,12 @@ export const BLOCK_TYPES = [
   "Auth",
   "Job",
   "Note",
+  "Security",
+  "Cache",
+  "Queue",
+  "Storage",
+  "SEO",
+  "Group",
 ] as const;
 
 export type BlockType = (typeof BLOCK_TYPES)[number];
@@ -124,6 +182,7 @@ export const CanvasNodeSchema = z.object({
   type: z.enum(BLOCK_TYPES),
   position: z.object({ x: z.number(), y: z.number() }),
   data: BlockDataSchema,
+  parentId: z.string().optional(),
 });
 
 export const CanvasEdgeSchema = z.object({
@@ -152,6 +211,12 @@ export type UserFlowData = z.infer<typeof UserFlowDataSchema>;
 export type AuthData = z.infer<typeof AuthDataSchema>;
 export type JobData = z.infer<typeof JobDataSchema>;
 export type NoteData = z.infer<typeof NoteDataSchema>;
+export type SecurityData = z.infer<typeof SecurityDataSchema>;
+export type CacheData = z.infer<typeof CacheDataSchema>;
+export type QueueData = z.infer<typeof QueueDataSchema>;
+export type StorageData = z.infer<typeof StorageDataSchema>;
+export type SEOData = z.infer<typeof SEODataSchema>;
+export type GroupData = z.infer<typeof GroupDataSchema>;
 export type BlockData = z.infer<typeof BlockDataSchema>;
 export type CanvasNode = z.infer<typeof CanvasNodeSchema>;
 export type CanvasEdge = z.infer<typeof CanvasEdgeSchema>;

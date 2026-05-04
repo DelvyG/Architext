@@ -23,6 +23,23 @@ const RULES: ConnectionRule[] = [
   { source: "Integration", target: "Integration", allowed: ["uses"] },
   { source: "Integration", target: "Note", allowed: ["uses"] },
   { source: "UserFlow", target: "View", allowed: ["navigatesTo"] },
+  // New block types
+  { source: "Security", target: "Endpoint", allowed: ["protects"] },
+  { source: "Security", target: "View", allowed: ["protects"] },
+  { source: "Security", target: "DataModel", allowed: ["protects"] },
+  { source: "Cache", target: "Endpoint", allowed: ["uses"] },
+  { source: "Cache", target: "DataModel", allowed: ["uses"] },
+  { source: "Queue", target: "Job", allowed: ["uses"] },
+  { source: "Queue", target: "Endpoint", allowed: ["uses"] },
+  { source: "Queue", target: "DataModel", allowed: ["uses"] },
+  { source: "Endpoint", target: "Queue", allowed: ["uses"] },
+  { source: "Endpoint", target: "Cache", allowed: ["uses"] },
+  { source: "Endpoint", target: "Storage", allowed: ["uses"] },
+  { source: "Storage", target: "DataModel", allowed: ["uses"] },
+  { source: "Job", target: "Queue", allowed: ["uses"] },
+  { source: "Job", target: "Storage", allowed: ["uses"] },
+  { source: "SEO", target: "View", allowed: ["uses"] },
+  { source: "View", target: "SEO", allowed: ["uses"] },
 ];
 
 export function isValidConnection(

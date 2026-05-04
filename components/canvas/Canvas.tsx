@@ -29,6 +29,12 @@ import { UserFlowNode } from "./nodes/UserFlowNode";
 import { AuthNode } from "./nodes/AuthNode";
 import { JobNode } from "./nodes/JobNode";
 import { NoteNode } from "./nodes/NoteNode";
+import { SecurityNode } from "./nodes/SecurityNode";
+import { CacheNode } from "./nodes/CacheNode";
+import { QueueNode } from "./nodes/QueueNode";
+import { StorageNode } from "./nodes/StorageNode";
+import { SEONode } from "./nodes/SEONode";
+import { GroupNode } from "./nodes/GroupNode";
 import { TypedEdge } from "./edges/TypedEdge";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { ContextMenu } from "./ContextMenu";
@@ -43,6 +49,12 @@ const nodeTypes = {
   Auth: AuthNode,
   Job: JobNode,
   Note: NoteNode,
+  Security: SecurityNode,
+  Cache: CacheNode,
+  Queue: QueueNode,
+  Storage: StorageNode,
+  SEO: SEONode,
+  Group: GroupNode,
 };
 
 const edgeTypes = {
