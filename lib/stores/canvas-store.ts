@@ -28,6 +28,7 @@ type CanvasActions = {
   deleteEdge: (id: string) => void;
   selectNode: (id: string | null) => void;
   updateNodePosition: (id: string, position: { x: number; y: number }) => void;
+  setNodeParent: (nodeId: string, parentId: string | undefined) => void;
   setIsSaving: (saving: boolean) => void;
   setIsDirty: (dirty: boolean) => void;
 };
@@ -64,12 +65,18 @@ export const useCanvasStore = create<CanvasState & CanvasActions>((set, get) => 
   },
 
   deleteNode: (id) => {
-    set((state) => ({
-      nodes: state.nodes.filter((n) => n.id !== id),
-      edges: state.edges.filter((e) => e.source !== id && e.target !== id),
-      selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId,
-      isDirty: true,
-    }));
+    set((state) => {
+      // Unparent children when deleting a group
+      const updatedNodes = state.nodes
+        .filter((n) => n.id !== id)
+        .map((n) => (n.parentId === id ? { ...n, parentId: undefined } : n));
+      return {
+        nodes: updatedNodes,
+        edges: state.edges.filter((e) => e.source !== id && e.target !== id),
+        selectedNodeId: state.selectedNodeId === id ? null : state.selectedNodeId,
+        isDirty: true,
+      };
+    });
   },
 
   addEdge: (source, target, type) => {
@@ -104,6 +111,13 @@ export const useCanvasStore = create<CanvasState & CanvasActions>((set, get) => 
   updateNodePosition: (id, position) => {
     set((state) => ({
       nodes: state.nodes.map((n) => (n.id === id ? { ...n, position } : n)),
+      isDirty: true,
+    }));
+  },
+
+  setNodeParent: (nodeId, parentId) => {
+    set((state) => ({
+      nodes: state.nodes.map((n) => (n.id === nodeId ? { ...n, parentId } : n)),
       isDirty: true,
     }));
   },

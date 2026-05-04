@@ -76,6 +76,7 @@ export function Canvas({ onSave }: Props) {
   const deleteNode = useCanvasStore((s) => s.deleteNode);
   const deleteEdge = useCanvasStore((s) => s.deleteEdge);
   const addNode = useCanvasStore((s) => s.addNode);
+  const setNodeParent = useCanvasStore((s) => s.setNodeParent);
 
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
@@ -84,13 +85,26 @@ export function Canvas({ onSave }: Props) {
     nodeId?: string;
   } | null>(null);
 
-  const rfNodes: Node[] = storeNodes.map((n) => ({
-    id: n.id,
-    type: n.type,
-    position: n.position,
-    data: n.data,
-    selected: false,
-  }));
+  const rfNodes: Node[] = storeNodes.map((n) => {
+    const base: Node = {
+      id: n.id,
+      type: n.type,
+      position: n.position,
+      data: n.data,
+    };
+
+    if (n.parentId) {
+      base.parentId = n.parentId;
+      base.extent = "parent" as const;
+    }
+
+    if (n.type === "Group") {
+      base.style = { width: 400, height: 300 };
+      base.dragHandle = ".group-drag-handle";
+    }
+
+    return base;
+  });
 
   const rfEdges: Edge[] = storeEdges.map((e) => ({
     id: e.id,
@@ -267,6 +281,62 @@ export function Canvas({ onSave }: Props) {
     setContextMenu({ x: e.clientX, y: e.clientY });
   }, []);
 
+  const handleNodeDragStop = useCallback(
+    (_: React.MouseEvent, draggedNode: Node) => {
+      // Skip if the dragged node is a Group itself
+      if (draggedNode.type === "Group") return;
+
+      const reactFlowInstance = rfInstance;
+      if (!reactFlowInstance) return;
+
+      // Find all group nodes
+      const groupNodes = nodes.filter((n) => n.type === "Group");
+
+      // Check if the dragged node's center is inside any group
+      const draggedCenterX = draggedNode.position.x + 90;
+      const draggedCenterY = draggedNode.position.y + 30;
+
+      let targetGroup: Node | undefined;
+      for (const group of groupNodes) {
+        const gw = (group.style?.width as number) ?? 400;
+        const gh = (group.style?.height as number) ?? 300;
+        if (
+          draggedCenterX > group.position.x &&
+          draggedCenterX < group.position.x + gw &&
+          draggedCenterY > group.position.y &&
+          draggedCenterY < group.position.y + gh
+        ) {
+          targetGroup = group;
+          break;
+        }
+      }
+
+      const currentParent = storeNodes.find((n) => n.id === draggedNode.id)?.parentId;
+
+      if (targetGroup && targetGroup.id !== currentParent) {
+        // Convert position to relative to group
+        const relX = draggedNode.position.x - targetGroup.position.x;
+        const relY = draggedNode.position.y - targetGroup.position.y;
+        updateNodePosition(draggedNode.id, { x: Math.max(10, relX), y: Math.max(30, relY) });
+        setNodeParent(draggedNode.id, targetGroup.id);
+        toast.success(`Added to ${(targetGroup.data as { name?: string }).name ?? "group"}`);
+      } else if (!targetGroup && currentParent) {
+        // Dragged out of a group — unparent
+        const parentNode = nodes.find((n) => n.id === currentParent);
+        if (parentNode) {
+          const absX = parentNode.position.x + draggedNode.position.x;
+          const absY = parentNode.position.y + draggedNode.position.y;
+          setNodeParent(draggedNode.id, undefined);
+          updateNodePosition(draggedNode.id, { x: absX, y: absY });
+          toast.success("Removed from group");
+        }
+      }
+    },
+    [nodes, storeNodes, updateNodePosition, setNodeParent],
+  );
+
+  const rfInstance = useReactFlow();
+
   function handleContextAction(action: string) {
     if (!contextMenu) return;
 
@@ -321,6 +391,7 @@ export function Canvas({ onSave }: Props) {
         onConnect={handleConnect}
         onSelectionChange={handleSelectionChange}
         onPaneClick={handlePaneClick}
+        onNodeDragStop={handleNodeDragStop}
         onNodeContextMenu={handleNodeContextMenu}
         onPaneContextMenu={handlePaneContextMenu}
         nodeTypes={nodeTypes}

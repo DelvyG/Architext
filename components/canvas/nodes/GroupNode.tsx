@@ -1,6 +1,6 @@
 "use client";
 
-import { Handle, Position, useNodeId, useStore } from "@xyflow/react";
+import { NodeResizer, useNodeId, useStore } from "@xyflow/react";
 import type { NodeProps } from "@xyflow/react";
 import type { GroupData } from "@/lib/blocks/schemas";
 
@@ -12,18 +12,30 @@ export function GroupNode({ id, data }: NodeProps & { data: GroupData }) {
   });
 
   return (
-    <div
-      className={`min-h-[200px] min-w-[300px] rounded-xl border-2 border-dashed p-4 transition-colors ${
-        isSelected ? "border-primary bg-primary/5" : "border-border/50 bg-muted/20"
-      }`}
-      style={{ backgroundColor: data.color ? `${data.color}20` : undefined }}
-    >
-      <Handle type="target" position={Position.Top} className="!bg-muted-foreground !w-2 !h-2" />
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        {data.name}
+    <>
+      <NodeResizer
+        isVisible={isSelected}
+        minWidth={250}
+        minHeight={150}
+        lineStyle={{ borderColor: "hsl(var(--primary))", borderWidth: 1 }}
+        handleStyle={{ width: 8, height: 8, backgroundColor: "hsl(var(--primary))" }}
+      />
+      <div
+        className={`h-full w-full rounded-xl border-2 border-dashed transition-colors ${
+          isSelected ? "border-primary" : "border-border/60"
+        }`}
+        style={{
+          backgroundColor: data.color ? `${data.color}15` : "rgba(0,0,0,0.02)",
+          padding: 12,
+        }}
+      >
+        <div className="group-drag-handle cursor-grab rounded px-2 py-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:bg-black/5 active:cursor-grabbing">
+          {data.name}
+        </div>
+        {data.description && (
+          <p className="mt-1 px-2 text-xs text-muted-foreground/70">{data.description}</p>
+        )}
       </div>
-      {data.description && <p className="text-xs text-muted-foreground">{data.description}</p>}
-      <Handle type="source" position={Position.Bottom} className="!bg-muted-foreground !w-2 !h-2" />
-    </div>
+    </>
   );
 }
