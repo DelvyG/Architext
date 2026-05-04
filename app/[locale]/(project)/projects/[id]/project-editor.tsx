@@ -1,9 +1,17 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Canvas } from "@/components/canvas/Canvas";
 import { Inspector } from "@/components/inspector/Inspector";
@@ -11,6 +19,16 @@ import { ChatPanel } from "@/components/chat/ChatPanel";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
 import { saveCanvas } from "./actions";
+import { createSnapshot, getSnapshots, restoreSnapshot } from "./snapshot-actions";
+import { Camera, History } from "lucide-react";
+import { toast } from "sonner";
+
+type Snapshot = {
+  id: string;
+  reason: string;
+  label: string | null;
+  createdAt: Date;
+};
 
 type Props = {
   projectId: string;
@@ -27,6 +45,11 @@ export function ProjectEditor({ projectId, projectName, initialCanvas, initialMe
   const nodes = useCanvasStore((s) => s.nodes);
   const edges = useCanvasStore((s) => s.edges);
 
+  const [showSnapshots, setShowSnapshots] = useState(false);
+  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
+  const [snapshotLabel, setSnapshotLabel] = useState("");
+  const [showSaveSnapshot, setShowSaveSnapshot] = useState(false);
+
   useEffect(() => {
     loadCanvas(
       projectId,
@@ -34,6 +57,22 @@ export function ProjectEditor({ projectId, projectName, initialCanvas, initialMe
       (initialCanvas.edges ?? []) as CanvasEdge[],
     );
   }, [projectId, initialCanvas, loadCanvas]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        setShowSaveSnapshot(true);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === "e") {
+        e.preventDefault();
+        window.location.href = `/projects/${projectId}/export`;
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [projectId]);
 
   const handleSave = useCallback(async () => {
     setIsSaving(true);
@@ -47,6 +86,27 @@ export function ProjectEditor({ projectId, projectName, initialCanvas, initialMe
     }
   }, [projectId, nodes, edges, setIsSaving, setIsDirty]);
 
+  async function handleSaveSnapshot() {
+    await createSnapshot(projectId, snapshotLabel || undefined);
+    toast.success("Snapshot saved");
+    setShowSaveSnapshot(false);
+    setSnapshotLabel("");
+  }
+
+  async function handleShowHistory() {
+    const list = await getSnapshots(projectId);
+    setSnapshots(list);
+    setShowSnapshots(true);
+  }
+
+  async function handleRestore(snapshotId: string) {
+    const canvas = await restoreSnapshot(projectId, snapshotId);
+    const c = canvas as { nodes: CanvasNode[]; edges: CanvasEdge[] };
+    loadCanvas(projectId, c.nodes ?? [], c.edges ?? []);
+    setShowSnapshots(false);
+    toast.success("Canvas restored from snapshot");
+  }
+
   return (
     <div className="flex h-screen flex-col">
       <header className="flex h-12 shrink-0 items-center gap-4 border-b px-4">
@@ -55,7 +115,15 @@ export function ProjectEditor({ projectId, projectName, initialCanvas, initialMe
         </Link>
         <span className="text-sm text-muted-foreground">/</span>
         <h1 className="text-sm font-medium">{projectName}</h1>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={() => setShowSaveSnapshot(true)}>
+            <Camera className="mr-1 h-3.5 w-3.5" />
+            Snapshot
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleShowHistory}>
+            <History className="mr-1 h-3.5 w-3.5" />
+            History
+          </Button>
           <Link href={`/projects/${projectId}/export`}>
             <Button variant="outline" size="sm">
               Export
@@ -76,6 +144,57 @@ export function ProjectEditor({ projectId, projectName, initialCanvas, initialMe
           <Inspector />
         </ResizablePanel>
       </ResizablePanelGroup>
+
+      {/* Save Snapshot Dialog */}
+      <Dialog open={showSaveSnapshot} onOpenChange={setShowSaveSnapshot}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Save snapshot</DialogTitle>
+          </DialogHeader>
+          <Input
+            placeholder="Label (optional)"
+            value={snapshotLabel}
+            onChange={(e) => setSnapshotLabel(e.target.value)}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveSnapshot(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveSnapshot}>Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Snapshot History Dialog */}
+      <Dialog open={showSnapshots} onOpenChange={setShowSnapshots}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Snapshot history</DialogTitle>
+          </DialogHeader>
+          {snapshots.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">No snapshots yet</p>
+          ) : (
+            <div className="max-h-[400px] space-y-2 overflow-y-auto">
+              {snapshots.map((snap) => (
+                <div
+                  key={snap.id}
+                  className="flex items-center justify-between rounded-md border p-3"
+                >
+                  <div>
+                    <p className="text-sm font-medium">{snap.label || snap.reason}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(snap.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => handleRestore(snap.id)}>
+                    Restore
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
