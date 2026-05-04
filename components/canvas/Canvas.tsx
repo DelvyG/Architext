@@ -93,31 +93,29 @@ function CanvasInner({ onSave }: Props) {
     nodeId?: string;
   } | null>(null);
 
-  const rfNodes: Node[] = storeNodes.map((n) => {
-    const base: Node = {
-      id: n.id,
-      type: n.type,
-      position: n.position,
-      data: n.data,
-    };
-
-    if (n.parentId) {
-      base.parentId = n.parentId;
-      base.extent = "parent" as const;
-      base.expandParent = true;
-    }
-
-    if (n.type === "Group") {
-      const gd = n.data as { width?: number; height?: number };
-      base.style = {
-        width: gd.width ?? 400,
-        height: gd.height ?? 300,
+  function mapToRfNodes(list: typeof storeNodes): Node[] {
+    return list.map((n) => {
+      const base: Node = {
+        id: n.id,
+        type: n.type,
+        position: n.position,
+        data: n.data,
       };
-      base.dragHandle = ".group-drag-handle";
-    }
+      if (n.parentId) {
+        base.parentId = n.parentId;
+        base.extent = "parent" as const;
+        base.expandParent = true;
+      }
+      if (n.type === "Group") {
+        const gd = n.data as { width?: number; height?: number };
+        base.style = { width: gd.width ?? 400, height: gd.height ?? 300 };
+        base.dragHandle = ".group-drag-handle";
+      }
+      return base;
+    });
+  }
 
-    return base;
-  });
+  const rfNodes: Node[] = mapToRfNodes(storeNodes);
 
   const rfEdges: Edge[] = storeEdges.map((e) => ({
     id: e.id,
@@ -135,14 +133,7 @@ function CanvasInner({ onSave }: Props) {
 
   useEffect(() => {
     if (prevNodesRef.current !== storeNodes) {
-      setNodes(
-        storeNodes.map((n) => ({
-          id: n.id,
-          type: n.type,
-          position: n.position,
-          data: n.data,
-        })),
-      );
+      setNodes(mapToRfNodes(storeNodes));
       prevNodesRef.current = storeNodes;
     }
   }, [storeNodes, setNodes]);
