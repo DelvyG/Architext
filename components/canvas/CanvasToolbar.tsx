@@ -93,63 +93,42 @@ export function CanvasToolbar() {
   }
 
   function handleAutoLayout() {
-    const COL_WIDTH = 350;
-    const ROW_GAP = 40;
-    const COL_GAP = 200;
-    const SECTION_GAP = 60;
-    const START_X = 100;
-    const START_Y = 50;
-
-    // Remove old section headers
-    const headerIds = nodes
+    // Remove old headers
+    const oldHeaders = nodes
       .filter((n) => n.type === "Note" && (n.data as { content: string }).content.startsWith("## "))
       .map((n) => n.id);
-    for (const id of headerIds) deleteNode(id);
+    for (const id of oldHeaders) deleteNode(id);
+
+    const COL_GAP = 350;
+    const ROW_GAP = 50;
+    const TYPE_GAP = 80;
 
     LAYOUT_COLUMNS.forEach((col, colIdx) => {
-      const colNodes = nodes.filter((n) => col.types.includes(n.type) && !headerIds.includes(n.id));
+      const colNodes = nodes.filter(
+        (n) => col.types.includes(n.type) && !oldHeaders.includes(n.id),
+      );
       if (colNodes.length === 0) return;
 
-      const colX = START_X + colIdx * (COL_WIDTH + COL_GAP);
+      const colX = 150 + colIdx * COL_GAP;
+      let y = 120;
 
-      // Section header
-      addNode("Note", { x: colX, y: START_Y });
-      const headerNode = useCanvasStore.getState().nodes.at(-1);
-      if (headerNode) {
-        const labels: Record<string, string> = {
-          BACKEND: "## 🟢 BACKEND",
-          FRONTEND: "## 🟣 FRONTEND",
-          INFRASTRUCTURE: "## 🟠 INFRASTRUCTURE",
-        };
-        useCanvasStore.getState().updateNode(headerNode.id, {
-          content: labels[col.label] ?? `## ${col.label}`,
-        });
-      }
-
-      let currentY = START_Y + 80;
-
-      // Sort by type order within column
       colNodes.sort((a, b) => col.types.indexOf(a.type) - col.types.indexOf(b.type));
 
       let prevType = "";
       colNodes.forEach((node) => {
-        // Extra gap between different block types
-        if (prevType && node.type !== prevType) {
-          currentY += SECTION_GAP;
-        }
-        updateNodePosition(node.id, { x: colX, y: currentY });
+        if (prevType && node.type !== prevType) y += TYPE_GAP;
+        updateNodePosition(node.id, { x: colX, y });
 
-        // Calculate block height
         const h =
           node.type === "DataModel"
-            ? 80 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
-            : 100;
-        currentY += h + ROW_GAP;
+            ? 90 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
+            : 110;
+        y += h + ROW_GAP;
         prevType = node.type;
       });
     });
 
-    toast.success("Organized: Backend → Frontend → Infrastructure");
+    toast.success("Backend → Frontend → Infrastructure");
   }
 
   return (
