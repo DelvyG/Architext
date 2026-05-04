@@ -1,8 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Handle, Position } from "@xyflow/react";
-import { useCanvasStore } from "@/lib/stores/canvas-store";
+import { Handle, Position, useNodeId, useStore } from "@xyflow/react";
 
 type Props = {
   id: string;
@@ -14,13 +13,14 @@ type Props = {
 };
 
 export function BaseNode({ id, icon, label, subtitle, color, children }: Props) {
-  const selectedNodeId = useCanvasStore((s) => s.selectedNodeId);
-  const selectNode = useCanvasStore((s) => s.selectNode);
-  const isSelected = selectedNodeId === id;
+  const nodeId = useNodeId();
+  const isSelected = useStore((s) => {
+    const node = s.nodes.find((n) => n.id === (nodeId ?? id));
+    return node?.selected ?? false;
+  });
 
   return (
     <div
-      onClick={() => selectNode(id)}
       className={`min-w-[180px] max-w-[260px] rounded-lg border bg-card p-3 text-card-foreground shadow-sm transition-colors ${
         isSelected
           ? "border-primary ring-2 ring-primary/20"
