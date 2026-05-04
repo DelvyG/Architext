@@ -83,6 +83,7 @@ export function CanvasToolbar() {
   const addNode = useCanvasStore((s) => s.addNode);
   const nodes = useCanvasStore((s) => s.nodes);
   const updateNodePosition = useCanvasStore((s) => s.updateNodePosition);
+  const deleteNode = useCanvasStore((s) => s.deleteNode);
 
   function handleAddBlock(type: BlockType) {
     counter++;
@@ -94,27 +95,44 @@ export function CanvasToolbar() {
   function handleAutoLayout() {
     const COL_WIDTH = 320;
     const ROW_GAP = 20;
-    const COL_GAP = 80;
-    const START_Y = 60;
+    const COL_GAP = 100;
+
+    // First remove any existing section header Notes created by previous auto-layout
+    const headerIds = nodes
+      .filter((n) => n.type === "Note" && (n.data as { content: string }).content.startsWith("## "))
+      .map((n) => n.id);
+    for (const id of headerIds) deleteNode(id);
 
     LAYOUT_COLUMNS.forEach((col, colIdx) => {
-      const colNodes = nodes.filter((n) => col.types.includes(n.type));
+      const colNodes = nodes.filter((n) => col.types.includes(n.type) && !headerIds.includes(n.id));
       if (colNodes.length === 0) return;
 
       const colX = 60 + colIdx * (COL_WIDTH + COL_GAP);
-      let currentY = START_Y;
 
-      // Sort: DataModels first, then by type order
+      // Create section header as a Note node
+      addNode("Note", { x: colX, y: 20 });
+      const headerNode = useCanvasStore.getState().nodes.at(-1);
+      if (headerNode) {
+        const colors: Record<string, string> = {
+          BACKEND: "## 🟢 BACKEND",
+          FRONTEND: "## 🟣 FRONTEND",
+          INFRASTRUCTURE: "## 🟠 INFRASTRUCTURE",
+        };
+        useCanvasStore.getState().updateNode(headerNode.id, {
+          content: colors[col.label] ?? `## ${col.label}`,
+        });
+      }
+
+      let currentY = 70;
+
       colNodes.sort((a, b) => {
         const ai = col.types.indexOf(a.type);
         const bi = col.types.indexOf(b.type);
         return ai - bi;
       });
 
-      // Place nodes in this column
       let prevType = "";
       colNodes.forEach((node) => {
-        // Add extra gap between different block types
         if (prevType && node.type !== prevType) {
           currentY += 30;
         }

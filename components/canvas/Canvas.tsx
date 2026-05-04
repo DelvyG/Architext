@@ -404,6 +404,20 @@ function CanvasInner({ onSave }: Props) {
   return (
     <div className="relative h-full">
       <CanvasToolbar />
+      <div className="absolute left-3 top-12 z-10 flex gap-3 text-[10px]">
+        <span className="flex items-center gap-1">
+          <span className="h-2.5 w-2.5 rounded-sm bg-blue-600" /> Data Models
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-2.5 w-2.5 rounded-sm bg-green-500" /> Backend
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-2.5 w-2.5 rounded-sm bg-purple-500" /> Frontend
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="h-2.5 w-2.5 rounded-sm bg-amber-500" /> Infrastructure
+        </span>
+      </div>
       <div className="absolute right-3 top-3 z-10 flex items-center gap-3 text-xs text-muted-foreground">
         {selectedCount > 1 && (
           <span className="rounded bg-primary/10 px-2 py-0.5 text-primary">
