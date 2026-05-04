@@ -17,7 +17,7 @@
       {
         "id": "product-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 100 },
+        "position": { "x": 80, "y": 80 },
         "data": {
           "blockType": "DataModel",
           "name": "Product",
@@ -36,7 +36,7 @@
       {
         "id": "category-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 436 },
+        "position": { "x": 420, "y": 80 },
         "data": {
           "blockType": "DataModel",
           "name": "Category",
@@ -51,7 +51,7 @@
       {
         "id": "order-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 660 },
+        "position": { "x": 720, "y": 80 },
         "data": {
           "blockType": "DataModel",
           "name": "Order",
@@ -67,7 +67,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 912 },
+        "position": { "x": 1050, "y": 80 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -79,10 +79,11 @@
           "relations": []
         }
       },
+
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 100, "y": 1156 },
+        "position": { "x": 80, "y": 450 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -93,7 +94,7 @@
       {
         "id": "api-products",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 1336 },
+        "position": { "x": 400, "y": 450 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -106,7 +107,7 @@
       {
         "id": "api-checkout",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 1486 },
+        "position": { "x": 700, "y": 450 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -119,7 +120,7 @@
       {
         "id": "api-orders",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 1636 },
+        "position": { "x": 1000, "y": 450 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -129,10 +130,11 @@
           "description": "List user orders with status tracking"
         }
       },
+
       {
         "id": "storefront-view",
         "type": "View",
-        "position": { "x": 550, "y": 100 },
+        "position": { "x": 80, "y": 650 },
         "data": {
           "blockType": "View",
           "name": "Storefront",
@@ -144,7 +146,7 @@
       {
         "id": "product-view",
         "type": "View",
-        "position": { "x": 550, "y": 250 },
+        "position": { "x": 400, "y": 650 },
         "data": {
           "blockType": "View",
           "name": "Product Detail",
@@ -156,7 +158,7 @@
       {
         "id": "cart-view",
         "type": "View",
-        "position": { "x": 550, "y": 400 },
+        "position": { "x": 700, "y": 650 },
         "data": {
           "blockType": "View",
           "name": "Cart & Checkout",
@@ -168,7 +170,7 @@
       {
         "id": "admin-view",
         "type": "View",
-        "position": { "x": 550, "y": 550 },
+        "position": { "x": 1000, "y": 650 },
         "data": {
           "blockType": "View",
           "name": "Admin Panel",
@@ -177,10 +179,74 @@
           "description": "Product management, order tracking, analytics"
         }
       },
+
+      {
+        "id": "stripe-int",
+        "type": "Integration",
+        "position": { "x": 1350, "y": 80 },
+        "data": {
+          "blockType": "Integration",
+          "service": "Stripe",
+          "purpose": "Payment processing with Checkout Sessions",
+          "usedIn": [],
+          "secretsNeeded": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+        }
+      },
+      {
+        "id": "email-int",
+        "type": "Integration",
+        "position": { "x": 1350, "y": 210 },
+        "data": {
+          "blockType": "Integration",
+          "service": "SendGrid",
+          "purpose": "Order confirmations and shipping notifications",
+          "usedIn": [],
+          "secretsNeeded": ["SENDGRID_API_KEY"]
+        }
+      },
+      {
+        "id": "storage-block",
+        "type": "Storage",
+        "position": { "x": 1350, "y": 340 },
+        "data": {
+          "blockType": "Storage",
+          "name": "Product Images",
+          "provider": "S3 / Cloudinary",
+          "fileTypes": ["image/jpeg", "image/png", "image/webp"],
+          "maxSize": "5MB"
+        }
+      },
+      {
+        "id": "cache-block",
+        "type": "Cache",
+        "position": { "x": 1350, "y": 470 },
+        "data": {
+          "blockType": "Cache",
+          "name": "Product Cache",
+          "strategy": "redis",
+          "ttl": "10m",
+          "description": "Cache product listings and categories"
+        }
+      },
+      {
+        "id": "security-block",
+        "type": "Security",
+        "position": { "x": 1350, "y": 600 },
+        "data": {
+          "blockType": "Security",
+          "name": "Store Security",
+          "policies": [
+            "CSRF protection",
+            "Rate limiting on checkout",
+            "Input sanitization",
+            "PCI compliance (via Stripe)"
+          ]
+        }
+      },
       {
         "id": "seo-block",
         "type": "SEO",
-        "position": { "x": 550, "y": 730 },
+        "position": { "x": 1350, "y": 730 },
         "data": {
           "blockType": "SEO",
           "name": "Store SEO",
@@ -194,72 +260,9 @@
         }
       },
       {
-        "id": "stripe-int",
-        "type": "Integration",
-        "position": { "x": 1000, "y": 100 },
-        "data": {
-          "blockType": "Integration",
-          "service": "Stripe",
-          "purpose": "Payment processing with Checkout Sessions",
-          "usedIn": [],
-          "secretsNeeded": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
-        }
-      },
-      {
-        "id": "email-int",
-        "type": "Integration",
-        "position": { "x": 1000, "y": 250 },
-        "data": {
-          "blockType": "Integration",
-          "service": "SendGrid",
-          "purpose": "Order confirmations and shipping notifications",
-          "usedIn": [],
-          "secretsNeeded": ["SENDGRID_API_KEY"]
-        }
-      },
-      {
-        "id": "storage-block",
-        "type": "Storage",
-        "position": { "x": 1000, "y": 430 },
-        "data": {
-          "blockType": "Storage",
-          "name": "Product Images",
-          "provider": "S3 / Cloudinary",
-          "fileTypes": ["image/jpeg", "image/png", "image/webp"],
-          "maxSize": "5MB"
-        }
-      },
-      {
-        "id": "cache-block",
-        "type": "Cache",
-        "position": { "x": 1000, "y": 610 },
-        "data": {
-          "blockType": "Cache",
-          "name": "Product Cache",
-          "strategy": "redis",
-          "ttl": "10m",
-          "description": "Cache product listings and categories"
-        }
-      },
-      {
-        "id": "security-block",
-        "type": "Security",
-        "position": { "x": 1000, "y": 790 },
-        "data": {
-          "blockType": "Security",
-          "name": "Store Security",
-          "policies": [
-            "CSRF protection",
-            "Rate limiting on checkout",
-            "Input sanitization",
-            "PCI compliance (via Stripe)"
-          ]
-        }
-      },
-      {
         "id": "order-job",
         "type": "Job",
-        "position": { "x": 100, "y": 1816 },
+        "position": { "x": 1350, "y": 860 },
         "data": {
           "blockType": "Job",
           "name": "OrderStatusSync",
