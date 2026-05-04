@@ -9,6 +9,7 @@ export function JobNode({ id, data, selected }: NodeProps & { data: JobData }) {
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<Clock className="h-3.5 w-3.5 text-amber-700" />}
       label={data.name}
       subtitle={`${data.trigger}${data.frequency ? `: ${data.frequency}` : ""}`}

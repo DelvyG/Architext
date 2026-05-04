@@ -9,6 +9,7 @@ export function SEONode({ id, data, selected }: NodeProps & { data: SEOData }) {
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<Search className="h-3.5 w-3.5 text-teal-700" />}
       label={data.name}
       subtitle={`${data.strategies.length} strategies`}

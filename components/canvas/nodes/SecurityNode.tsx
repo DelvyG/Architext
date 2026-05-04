@@ -9,6 +9,7 @@ export function SecurityNode({ id, data, selected }: NodeProps & { data: Securit
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<ShieldCheck className="h-3.5 w-3.5 text-rose-700" />}
       label={data.name}
       subtitle={`${data.policies.length} policies`}

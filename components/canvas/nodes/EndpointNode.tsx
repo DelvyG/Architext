@@ -9,6 +9,7 @@ export function EndpointNode({ id, data, selected }: NodeProps & { data: Endpoin
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<Globe className="h-3.5 w-3.5 text-green-700" />}
       label={`${data.method} ${data.path}`}
       subtitle={data.auth !== "none" ? `auth: ${data.auth}` : undefined}

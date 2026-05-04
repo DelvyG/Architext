@@ -9,6 +9,7 @@ export function StorageNode({ id, data, selected }: NodeProps & { data: StorageD
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<HardDrive className="h-3.5 w-3.5 text-slate-700" />}
       label={data.name}
       subtitle={data.provider}

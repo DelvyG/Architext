@@ -9,6 +9,7 @@ export function UserFlowNode({ id, data, selected }: NodeProps & { data: UserFlo
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<GitBranch className="h-3.5 w-3.5 text-cyan-700" />}
       label={data.name}
       subtitle={`${data.steps.length} steps`}

@@ -9,6 +9,7 @@ export function IntegrationNode({ id, data, selected }: NodeProps & { data: Inte
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<Plug className="h-3.5 w-3.5 text-orange-700" />}
       label={data.service}
       subtitle={data.purpose}

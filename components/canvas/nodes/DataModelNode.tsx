@@ -9,6 +9,7 @@ export function DataModelNode({ id, data, selected }: NodeProps & { data: DataMo
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<Database className="h-3.5 w-3.5 text-blue-700" />}
       label={data.name}
       subtitle={`${data.fields.length} fields, ${data.relations.length} relations`}

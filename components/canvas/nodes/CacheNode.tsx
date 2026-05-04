@@ -9,6 +9,7 @@ export function CacheNode({ id, data, selected }: NodeProps & { data: CacheData 
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<Zap className="h-3.5 w-3.5 text-emerald-700" />}
       label={data.name}
       subtitle={data.strategy}

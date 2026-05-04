@@ -9,6 +9,7 @@ export function AuthNode({ id, data, selected }: NodeProps & { data: AuthData })
   return (
     <BaseNode
       id={id}
+      selected={selected}
       icon={<Shield className="h-3.5 w-3.5 text-red-700" />}
       label={data.method}
       subtitle={`${data.roles.length} roles`}
