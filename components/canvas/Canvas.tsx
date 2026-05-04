@@ -144,7 +144,14 @@ function CanvasInner({ onSave }: Props) {
 
   useEffect(() => {
     if (prevNodesRef.current !== storeNodes) {
-      setNodes(mapToRfNodes(storeNodes.filter((n) => n.type !== "Group")));
+      setNodes((currentNodes) => {
+        // Preserve selected state when syncing from store
+        const selectedIds = new Set(currentNodes.filter((n) => n.selected).map((n) => n.id));
+        return mapToRfNodes(storeNodes.filter((n) => n.type !== "Group")).map((n) => ({
+          ...n,
+          selected: selectedIds.has(n.id),
+        }));
+      });
       prevNodesRef.current = storeNodes;
     }
   }, [storeNodes, setNodes]);
