@@ -65,8 +65,7 @@
       {
         "id": "org-model",
         "type": "DataModel",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-data",
+        "position": { "x": 70, "y": 90 },
         "data": {
           "blockType": "DataModel",
           "name": "Organization",
@@ -82,8 +81,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 250, "y": 40 },
-        "parentId": "grp-data",
+        "position": { "x": 300, "y": 90 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -99,8 +97,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 20, "y": 200 },
-        "parentId": "grp-data",
+        "position": { "x": 70, "y": 250 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -112,8 +109,7 @@
       {
         "id": "api-users",
         "type": "Endpoint",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-api",
+        "position": { "x": 70, "y": 460 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -126,8 +122,7 @@
       {
         "id": "api-orgs",
         "type": "Endpoint",
-        "position": { "x": 250, "y": 40 },
-        "parentId": "grp-api",
+        "position": { "x": 300, "y": 460 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -140,8 +135,7 @@
       {
         "id": "api-billing",
         "type": "Endpoint",
-        "position": { "x": 250, "y": 140 },
-        "parentId": "grp-api",
+        "position": { "x": 300, "y": 560 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -155,8 +149,7 @@
       {
         "id": "dashboard-view",
         "type": "View",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-frontend",
+        "position": { "x": 70, "y": 790 },
         "data": {
           "blockType": "View",
           "name": "Dashboard",
@@ -168,8 +161,7 @@
       {
         "id": "settings-view",
         "type": "View",
-        "position": { "x": 250, "y": 40 },
-        "parentId": "grp-frontend",
+        "position": { "x": 300, "y": 790 },
         "data": {
           "blockType": "View",
           "name": "Settings",
@@ -182,8 +174,7 @@
       {
         "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-infra",
+        "position": { "x": 620, "y": 90 },
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
@@ -195,8 +186,7 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 20, "y": 140 },
-        "parentId": "grp-infra",
+        "position": { "x": 620, "y": 190 },
         "data": {
           "blockType": "Security",
           "name": "API Security",
@@ -212,8 +202,7 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 20, "y": 250 },
-        "parentId": "grp-infra",
+        "position": { "x": 620, "y": 300 },
         "data": {
           "blockType": "Cache",
           "name": "Session & Data Cache",
@@ -224,8 +213,7 @@
       {
         "id": "seo-block",
         "type": "SEO",
-        "position": { "x": 20, "y": 350 },
-        "parentId": "grp-infra",
+        "position": { "x": 620, "y": 400 },
         "data": {
           "blockType": "SEO",
           "name": "SEO & Marketing",

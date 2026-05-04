@@ -66,8 +66,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-data",
+        "position": { "x": 70, "y": 90 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -84,8 +83,7 @@
       {
         "id": "prompt-model",
         "type": "DataModel",
-        "position": { "x": 250, "y": 40 },
-        "parentId": "grp-data",
+        "position": { "x": 300, "y": 90 },
         "data": {
           "blockType": "DataModel",
           "name": "Prompt",
@@ -102,8 +100,7 @@
       {
         "id": "generation-model",
         "type": "DataModel",
-        "position": { "x": 20, "y": 160 },
-        "parentId": "grp-data",
+        "position": { "x": 70, "y": 210 },
         "data": {
           "blockType": "DataModel",
           "name": "Generation",
@@ -124,8 +121,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 250, "y": 160 },
-        "parentId": "grp-data",
+        "position": { "x": 300, "y": 210 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -137,8 +133,7 @@
       {
         "id": "api-generate",
         "type": "Endpoint",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-api",
+        "position": { "x": 70, "y": 460 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -151,8 +146,7 @@
       {
         "id": "api-prompts",
         "type": "Endpoint",
-        "position": { "x": 250, "y": 40 },
-        "parentId": "grp-api",
+        "position": { "x": 300, "y": 460 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -165,8 +159,7 @@
       {
         "id": "api-history",
         "type": "Endpoint",
-        "position": { "x": 20, "y": 160 },
-        "parentId": "grp-api",
+        "position": { "x": 70, "y": 580 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -179,8 +172,7 @@
       {
         "id": "api-billing",
         "type": "Endpoint",
-        "position": { "x": 250, "y": 160 },
-        "parentId": "grp-api",
+        "position": { "x": 300, "y": 580 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -194,8 +186,7 @@
       {
         "id": "playground-view",
         "type": "View",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-frontend",
+        "position": { "x": 70, "y": 790 },
         "data": {
           "blockType": "View",
           "name": "Playground",
@@ -207,8 +198,7 @@
       {
         "id": "history-view",
         "type": "View",
-        "position": { "x": 250, "y": 40 },
-        "parentId": "grp-frontend",
+        "position": { "x": 300, "y": 790 },
         "data": {
           "blockType": "View",
           "name": "History",
@@ -220,8 +210,7 @@
       {
         "id": "prompts-view",
         "type": "View",
-        "position": { "x": 20, "y": 160 },
-        "parentId": "grp-frontend",
+        "position": { "x": 70, "y": 910 },
         "data": {
           "blockType": "View",
           "name": "Prompt Library",
@@ -234,8 +223,7 @@
       {
         "id": "openai-int",
         "type": "Integration",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 90 },
         "data": {
           "blockType": "Integration",
           "service": "OpenAI",
@@ -247,8 +235,7 @@
       {
         "id": "anthropic-int",
         "type": "Integration",
-        "position": { "x": 20, "y": 160 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 210 },
         "data": {
           "blockType": "Integration",
           "service": "Anthropic",
@@ -260,8 +247,7 @@
       {
         "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 20, "y": 280 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 330 },
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
@@ -273,8 +259,7 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 20, "y": 400 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 450 },
         "data": {
           "blockType": "Cache",
           "name": "Response Cache",
@@ -286,8 +271,7 @@
       {
         "id": "queue-block",
         "type": "Queue",
-        "position": { "x": 20, "y": 520 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 570 },
         "data": {
           "blockType": "Queue",
           "name": "Generation Queue",
@@ -299,8 +283,7 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 20, "y": 640 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 690 },
         "data": {
           "blockType": "Security",
           "name": "AI Security",
@@ -316,8 +299,7 @@
       {
         "id": "seo-block",
         "type": "SEO",
-        "position": { "x": 20, "y": 760 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 810 },
         "data": {
           "blockType": "SEO",
           "name": "Marketing SEO",

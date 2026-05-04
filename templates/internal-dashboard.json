@@ -41,8 +41,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-data",
+        "position": { "x": 70, "y": 90 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -60,8 +59,7 @@
       {
         "id": "audit-model",
         "type": "DataModel",
-        "position": { "x": 250, "y": 40 },
-        "parentId": "grp-data",
+        "position": { "x": 300, "y": 90 },
         "data": {
           "blockType": "DataModel",
           "name": "AuditLog",
@@ -78,8 +76,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 20, "y": 160 },
-        "parentId": "grp-data",
+        "position": { "x": 70, "y": 210 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -90,8 +87,7 @@
       {
         "id": "api-users",
         "type": "Endpoint",
-        "position": { "x": 20, "y": 280 },
-        "parentId": "grp-data",
+        "position": { "x": 70, "y": 330 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -104,8 +100,7 @@
       {
         "id": "api-metrics",
         "type": "Endpoint",
-        "position": { "x": 250, "y": 280 },
-        "parentId": "grp-data",
+        "position": { "x": 300, "y": 330 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -118,8 +113,7 @@
       {
         "id": "api-audit",
         "type": "Endpoint",
-        "position": { "x": 250, "y": 400 },
-        "parentId": "grp-data",
+        "position": { "x": 300, "y": 450 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -170,8 +164,7 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 20, "y": 40 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 90 },
         "data": {
           "blockType": "Security",
           "name": "Admin Security",
@@ -187,8 +180,7 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 20, "y": 160 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 210 },
         "data": {
           "blockType": "Cache",
           "name": "Metrics Cache",
@@ -200,8 +192,7 @@
       {
         "id": "cleanup-job",
         "type": "Job",
-        "position": { "x": 20, "y": 280 },
-        "parentId": "grp-infra",
+        "position": { "x": 720, "y": 330 },
         "data": {
           "blockType": "Job",
           "name": "AuditLogCleanup",
