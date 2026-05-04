@@ -16,12 +16,13 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Canvas } from "@/components/canvas/Canvas";
 import { Inspector } from "@/components/inspector/Inspector";
 import { ChatPanel } from "@/components/chat/ChatPanel";
+import { StackPanel } from "@/components/stack/StackPanel";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
 import { saveCanvas } from "./actions";
 import { createSnapshot, getSnapshots, restoreSnapshot } from "./snapshot-actions";
 import { generateShareToken, revokeShareToken } from "./share-actions";
-import { Camera, History, Key, Share2, Copy, Check } from "lucide-react";
+import { Camera, History, Key, Share2, Copy, Check, Layers } from "lucide-react";
 import { toast } from "sonner";
 
 type Snapshot = {
@@ -62,6 +63,7 @@ export function ProjectEditor({
   const [showShare, setShowShare] = useState(false);
   const [shareToken, setShareToken] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [showStack, setShowStack] = useState(false);
 
   useEffect(() => {
     loadCanvas(
@@ -156,6 +158,10 @@ export function ProjectEditor({
             <History className="mr-1 h-3.5 w-3.5" />
             History
           </Button>
+          <Button variant="ghost" size="sm" onClick={() => setShowStack(true)}>
+            <Layers className="mr-1 h-3.5 w-3.5" />
+            Stack
+          </Button>
           <Button
             variant="ghost"
             size="sm"
@@ -239,6 +245,9 @@ export function ProjectEditor({
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Stack Panel */}
+      <StackPanel projectId={projectId} open={showStack} onClose={() => setShowStack(false)} />
 
       {/* Share Dialog */}
       <Dialog open={showShare} onOpenChange={setShowShare}>
