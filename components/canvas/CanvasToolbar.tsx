@@ -93,11 +93,14 @@ export function CanvasToolbar() {
   }
 
   function handleAutoLayout() {
-    const COL_WIDTH = 320;
-    const ROW_GAP = 20;
-    const COL_GAP = 100;
+    const COL_WIDTH = 350;
+    const ROW_GAP = 40;
+    const COL_GAP = 200;
+    const SECTION_GAP = 60;
+    const START_X = 100;
+    const START_Y = 50;
 
-    // First remove any existing section header Notes created by previous auto-layout
+    // Remove old section headers
     const headerIds = nodes
       .filter((n) => n.type === "Note" && (n.data as { content: string }).content.startsWith("## "))
       .map((n) => n.id);
@@ -107,41 +110,40 @@ export function CanvasToolbar() {
       const colNodes = nodes.filter((n) => col.types.includes(n.type) && !headerIds.includes(n.id));
       if (colNodes.length === 0) return;
 
-      const colX = 60 + colIdx * (COL_WIDTH + COL_GAP);
+      const colX = START_X + colIdx * (COL_WIDTH + COL_GAP);
 
-      // Create section header as a Note node
-      addNode("Note", { x: colX, y: 20 });
+      // Section header
+      addNode("Note", { x: colX, y: START_Y });
       const headerNode = useCanvasStore.getState().nodes.at(-1);
       if (headerNode) {
-        const colors: Record<string, string> = {
+        const labels: Record<string, string> = {
           BACKEND: "## 🟢 BACKEND",
           FRONTEND: "## 🟣 FRONTEND",
           INFRASTRUCTURE: "## 🟠 INFRASTRUCTURE",
         };
         useCanvasStore.getState().updateNode(headerNode.id, {
-          content: colors[col.label] ?? `## ${col.label}`,
+          content: labels[col.label] ?? `## ${col.label}`,
         });
       }
 
-      let currentY = 70;
+      let currentY = START_Y + 80;
 
-      colNodes.sort((a, b) => {
-        const ai = col.types.indexOf(a.type);
-        const bi = col.types.indexOf(b.type);
-        return ai - bi;
-      });
+      // Sort by type order within column
+      colNodes.sort((a, b) => col.types.indexOf(a.type) - col.types.indexOf(b.type));
 
       let prevType = "";
       colNodes.forEach((node) => {
+        // Extra gap between different block types
         if (prevType && node.type !== prevType) {
-          currentY += 30;
+          currentY += SECTION_GAP;
         }
         updateNodePosition(node.id, { x: colX, y: currentY });
 
+        // Calculate block height
         const h =
           node.type === "DataModel"
-            ? 70 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
-            : 90;
+            ? 80 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
+            : 100;
         currentY += h + ROW_GAP;
         prevType = node.type;
       });
