@@ -144,7 +144,7 @@ function CanvasInner({ onSave }: Props) {
 
   useEffect(() => {
     if (prevNodesRef.current !== storeNodes) {
-      setNodes(mapToRfNodes(storeNodes));
+      setNodes(mapToRfNodes(storeNodes.filter((n) => n.type !== "Group")));
       prevNodesRef.current = storeNodes;
     }
   }, [storeNodes, setNodes]);
