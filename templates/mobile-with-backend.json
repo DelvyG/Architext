@@ -1,0 +1,144 @@
+{
+  "slug": "mobile-with-backend",
+  "name": { "en": "Mobile App + Backend", "es": "App móvil + Backend" },
+  "description": {
+    "en": "REST API backend for a mobile app with auth, push notifications, and file uploads",
+    "es": "Backend API REST para app móvil con auth, notificaciones push y subida de archivos"
+  },
+  "suggestedStack": {
+    "frontend": "React Native / Flutter",
+    "backend": "Next.js API Routes",
+    "db": "PostgreSQL",
+    "hosting": "Railway / Render",
+    "integrations": ["Firebase Cloud Messaging", "S3"]
+  },
+  "canvas": {
+    "nodes": [
+      {
+        "id": "user-model",
+        "type": "DataModel",
+        "position": { "x": 100, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "User",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "email", "type": "email", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true },
+            { "name": "avatarUrl", "type": "string", "required": false },
+            { "name": "pushToken", "type": "string", "required": false }
+          ],
+          "relations": []
+        }
+      },
+      {
+        "id": "post-model",
+        "type": "DataModel",
+        "position": { "x": 400, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "Post",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "content", "type": "text", "required": true },
+            { "name": "imageUrl", "type": "string", "required": false }
+          ],
+          "relations": [{ "target": "User", "type": "many-to-many" }]
+        }
+      },
+      {
+        "id": "api-auth",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 300 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/auth/login",
+          "auth": "none",
+          "consumedByViews": [],
+          "description": "Login and return JWT"
+        }
+      },
+      {
+        "id": "api-posts",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 300 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/posts",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Feed of posts"
+        }
+      },
+      {
+        "id": "api-upload",
+        "type": "Endpoint",
+        "position": { "x": 700, "y": 300 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/upload",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Upload image to S3"
+        }
+      },
+      {
+        "id": "auth-block",
+        "type": "Auth",
+        "position": { "x": 250, "y": 480 },
+        "data": {
+          "blockType": "Auth",
+          "method": "email-password",
+          "roles": ["user", "admin"],
+          "protects": []
+        }
+      },
+      {
+        "id": "fcm-int",
+        "type": "Integration",
+        "position": { "x": 550, "y": 480 },
+        "data": {
+          "blockType": "Integration",
+          "service": "Firebase Cloud Messaging",
+          "purpose": "Push notifications to mobile devices",
+          "usedIn": [],
+          "secretsNeeded": ["FCM_SERVER_KEY"]
+        }
+      },
+      {
+        "id": "s3-int",
+        "type": "Integration",
+        "position": { "x": 700, "y": 480 },
+        "data": {
+          "blockType": "Integration",
+          "service": "AWS S3",
+          "purpose": "Image and file storage",
+          "usedIn": [],
+          "secretsNeeded": ["AWS_ACCESS_KEY", "AWS_SECRET_KEY", "S3_BUCKET"]
+        }
+      },
+      {
+        "id": "notify-job",
+        "type": "Job",
+        "position": { "x": 400, "y": 630 },
+        "data": {
+          "blockType": "Job",
+          "name": "SendPushNotifications",
+          "trigger": "event",
+          "action": "Send push notification when new post is created"
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e1", "source": "api-auth", "target": "user-model", "type": "uses" },
+      { "id": "e2", "source": "api-posts", "target": "post-model", "type": "uses" },
+      { "id": "e3", "source": "auth-block", "target": "api-posts", "type": "protects" },
+      { "id": "e4", "source": "auth-block", "target": "api-upload", "type": "protects" },
+      { "id": "e5", "source": "s3-int", "target": "api-upload", "type": "uses" },
+      { "id": "e6", "source": "notify-job", "target": "post-model", "type": "uses" }
+    ]
+  }
+}

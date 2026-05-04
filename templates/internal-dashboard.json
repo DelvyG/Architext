@@ -1,0 +1,121 @@
+{
+  "slug": "internal-dashboard",
+  "name": { "en": "Internal Dashboard", "es": "Dashboard interno" },
+  "description": {
+    "en": "Admin dashboard with metrics, user management, and data tables",
+    "es": "Dashboard administrativo con métricas, gestión de usuarios y tablas de datos"
+  },
+  "suggestedStack": {
+    "frontend": "Next.js",
+    "backend": "Next.js API Routes",
+    "db": "PostgreSQL",
+    "hosting": "Docker / Internal"
+  },
+  "canvas": {
+    "nodes": [
+      {
+        "id": "user-model",
+        "type": "DataModel",
+        "position": { "x": 100, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "User",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "email", "type": "email", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true },
+            { "name": "role", "type": "string", "required": true },
+            { "name": "department", "type": "string", "required": false }
+          ],
+          "relations": []
+        }
+      },
+      {
+        "id": "activity-model",
+        "type": "DataModel",
+        "position": { "x": 400, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "ActivityLog",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "action", "type": "string", "required": true },
+            { "name": "details", "type": "json", "required": false },
+            { "name": "timestamp", "type": "datetime", "required": true }
+          ],
+          "relations": [{ "target": "User", "type": "many-to-many" }]
+        }
+      },
+      {
+        "id": "api-users",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 300 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/admin/users",
+          "auth": "role-based",
+          "consumedByViews": [],
+          "description": "List and filter users"
+        }
+      },
+      {
+        "id": "api-metrics",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 300 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/admin/metrics",
+          "auth": "role-based",
+          "consumedByViews": [],
+          "description": "Dashboard KPIs and charts"
+        }
+      },
+      {
+        "id": "dashboard-view",
+        "type": "View",
+        "position": { "x": 250, "y": 480 },
+        "data": {
+          "blockType": "View",
+          "name": "Dashboard",
+          "route": "/admin",
+          "consumesEndpoints": [],
+          "description": "Overview with KPI cards and charts"
+        }
+      },
+      {
+        "id": "users-view",
+        "type": "View",
+        "position": { "x": 550, "y": 480 },
+        "data": {
+          "blockType": "View",
+          "name": "User Management",
+          "route": "/admin/users",
+          "consumesEndpoints": [],
+          "description": "User table with CRUD"
+        }
+      },
+      {
+        "id": "auth-block",
+        "type": "Auth",
+        "position": { "x": 700, "y": 100 },
+        "data": {
+          "blockType": "Auth",
+          "method": "email-password",
+          "roles": ["admin", "viewer"],
+          "protects": []
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e1", "source": "api-users", "target": "user-model", "type": "uses" },
+      { "id": "e2", "source": "api-metrics", "target": "activity-model", "type": "uses" },
+      { "id": "e3", "source": "dashboard-view", "target": "api-metrics", "type": "uses" },
+      { "id": "e4", "source": "users-view", "target": "api-users", "type": "uses" },
+      { "id": "e5", "source": "auth-block", "target": "dashboard-view", "type": "protects" },
+      { "id": "e6", "source": "auth-block", "target": "users-view", "type": "protects" },
+      { "id": "e7", "source": "dashboard-view", "target": "users-view", "type": "navigatesTo" }
+    ]
+  }
+}

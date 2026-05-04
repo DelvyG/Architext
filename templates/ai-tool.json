@@ -1,0 +1,152 @@
+{
+  "slug": "ai-tool",
+  "name": { "en": "AI Tool", "es": "Herramienta IA" },
+  "description": {
+    "en": "AI-powered tool with prompt management, usage tracking, and API key management",
+    "es": "Herramienta potenciada por IA con gestión de prompts, tracking de uso y gestión de API keys"
+  },
+  "suggestedStack": {
+    "frontend": "Next.js",
+    "backend": "Next.js API Routes",
+    "db": "PostgreSQL",
+    "hosting": "Vercel",
+    "integrations": ["OpenAI API", "Stripe"]
+  },
+  "canvas": {
+    "nodes": [
+      {
+        "id": "user-model",
+        "type": "DataModel",
+        "position": { "x": 100, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "User",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "email", "type": "email", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true },
+            { "name": "plan", "type": "string", "required": true },
+            { "name": "creditsRemaining", "type": "integer", "required": true }
+          ],
+          "relations": []
+        }
+      },
+      {
+        "id": "prompt-model",
+        "type": "DataModel",
+        "position": { "x": 400, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "Prompt",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "title", "type": "string", "required": true },
+            { "name": "template", "type": "text", "required": true },
+            { "name": "variables", "type": "json", "required": false }
+          ],
+          "relations": [{ "target": "User", "type": "many-to-many" }]
+        }
+      },
+      {
+        "id": "generation-model",
+        "type": "DataModel",
+        "position": { "x": 700, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "Generation",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "input", "type": "text", "required": true },
+            { "name": "output", "type": "text", "required": true },
+            { "name": "model", "type": "string", "required": true },
+            { "name": "tokensUsed", "type": "integer", "required": true }
+          ],
+          "relations": [{ "target": "Prompt", "type": "many-to-many" }]
+        }
+      },
+      {
+        "id": "api-generate",
+        "type": "Endpoint",
+        "position": { "x": 250, "y": 300 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/generate",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Run AI generation with a prompt template"
+        }
+      },
+      {
+        "id": "api-prompts",
+        "type": "Endpoint",
+        "position": { "x": 550, "y": 300 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/prompts",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "List user prompt templates"
+        }
+      },
+      {
+        "id": "playground-view",
+        "type": "View",
+        "position": { "x": 100, "y": 480 },
+        "data": {
+          "blockType": "View",
+          "name": "Playground",
+          "route": "/playground",
+          "consumesEndpoints": [],
+          "description": "Interactive prompt testing interface"
+        }
+      },
+      {
+        "id": "history-view",
+        "type": "View",
+        "position": { "x": 400, "y": 480 },
+        "data": {
+          "blockType": "View",
+          "name": "History",
+          "route": "/history",
+          "consumesEndpoints": [],
+          "description": "Past generations with search"
+        }
+      },
+      {
+        "id": "auth-block",
+        "type": "Auth",
+        "position": { "x": 700, "y": 300 },
+        "data": {
+          "blockType": "Auth",
+          "method": "email-password",
+          "roles": ["user", "admin"],
+          "protects": []
+        }
+      },
+      {
+        "id": "openai-int",
+        "type": "Integration",
+        "position": { "x": 700, "y": 480 },
+        "data": {
+          "blockType": "Integration",
+          "service": "OpenAI",
+          "purpose": "LLM inference for text generation",
+          "usedIn": [],
+          "secretsNeeded": ["OPENAI_API_KEY"]
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e1", "source": "api-generate", "target": "generation-model", "type": "uses" },
+      { "id": "e2", "source": "api-generate", "target": "prompt-model", "type": "uses" },
+      { "id": "e3", "source": "api-prompts", "target": "prompt-model", "type": "uses" },
+      { "id": "e4", "source": "playground-view", "target": "api-generate", "type": "uses" },
+      { "id": "e5", "source": "history-view", "target": "api-prompts", "type": "uses" },
+      { "id": "e6", "source": "auth-block", "target": "api-generate", "type": "protects" },
+      { "id": "e7", "source": "auth-block", "target": "playground-view", "type": "protects" },
+      { "id": "e8", "source": "openai-int", "target": "api-generate", "type": "uses" }
+    ]
+  }
+}

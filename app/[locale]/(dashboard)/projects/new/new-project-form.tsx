@@ -7,17 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { createProject } from "../../actions";
 
 const TEMPLATES = [
-  { slug: "blank", enabled: true },
-  { slug: "saas-b2b", enabled: false },
-  { slug: "ecommerce", enabled: false },
-  { slug: "internal-dashboard", enabled: false },
-  { slug: "mobile-with-backend", enabled: false },
-  { slug: "ai-tool", enabled: false },
-] as const;
+  { slug: "blank", label: "Blank project", labelEs: "Proyecto vacío" },
+  { slug: "saas-b2b", label: "B2B SaaS", labelEs: "SaaS B2B" },
+  { slug: "ecommerce", label: "E-commerce", labelEs: "E-commerce" },
+  { slug: "internal-dashboard", label: "Internal Dashboard", labelEs: "Dashboard interno" },
+  { slug: "mobile-with-backend", label: "Mobile + Backend", labelEs: "App móvil + Backend" },
+  { slug: "ai-tool", label: "AI Tool", labelEs: "Herramienta IA" },
+];
 
 export function NewProjectForm() {
   const t = useTranslations("dashboard.newProject");
@@ -82,34 +81,20 @@ export function NewProjectForm() {
           <div className="space-y-2">
             <Label>{t("template")}</Label>
             <div className="grid grid-cols-2 gap-2">
-              {TEMPLATES.map((tmpl) => {
-                const btn = (
-                  <button
-                    key={tmpl.slug}
-                    type="button"
-                    disabled={!tmpl.enabled}
-                    onClick={() => tmpl.enabled && setTemplate(tmpl.slug)}
-                    className={`rounded-md border p-3 text-left text-sm transition-colors ${
-                      template === tmpl.slug
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    } ${!tmpl.enabled ? "cursor-not-allowed opacity-50" : ""}`}
-                  >
-                    {tmpl.slug === "blank" ? t("templateBlank") : tmpl.slug}
-                  </button>
-                );
-
-                if (!tmpl.enabled) {
-                  return (
-                    <Tooltip key={tmpl.slug}>
-                      <TooltipTrigger render={<div />}>{btn}</TooltipTrigger>
-                      <TooltipContent>{t("templateComingSoon")}</TooltipContent>
-                    </Tooltip>
-                  );
-                }
-
-                return btn;
-              })}
+              {TEMPLATES.map((tmpl) => (
+                <button
+                  key={tmpl.slug}
+                  type="button"
+                  onClick={() => setTemplate(tmpl.slug)}
+                  className={`rounded-md border p-3 text-left text-sm transition-colors ${
+                    template === tmpl.slug
+                      ? "border-primary bg-primary/5 font-medium"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  {tmpl.label}
+                </button>
+              ))}
             </div>
           </div>
 

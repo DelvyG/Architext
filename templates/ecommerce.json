@@ -1,0 +1,165 @@
+{
+  "slug": "ecommerce",
+  "name": { "en": "E-commerce", "es": "E-commerce" },
+  "description": {
+    "en": "Online store with products, cart, checkout, and payment processing",
+    "es": "Tienda online con productos, carrito, checkout y procesamiento de pagos"
+  },
+  "suggestedStack": {
+    "frontend": "Next.js",
+    "backend": "Next.js API Routes",
+    "db": "PostgreSQL",
+    "hosting": "Vercel / Docker",
+    "integrations": ["Stripe", "SendGrid"]
+  },
+  "canvas": {
+    "nodes": [
+      {
+        "id": "product-model",
+        "type": "DataModel",
+        "position": { "x": 100, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "Product",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true },
+            { "name": "description", "type": "text", "required": false },
+            { "name": "price", "type": "integer", "required": true },
+            { "name": "stock", "type": "integer", "required": true },
+            { "name": "imageUrl", "type": "string", "required": false }
+          ],
+          "relations": [{ "target": "Category", "type": "many-to-many" }]
+        }
+      },
+      {
+        "id": "category-model",
+        "type": "DataModel",
+        "position": { "x": 400, "y": 100 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "Category",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true },
+            { "name": "slug", "type": "string", "required": true, "unique": true }
+          ],
+          "relations": []
+        }
+      },
+      {
+        "id": "order-model",
+        "type": "DataModel",
+        "position": { "x": 100, "y": 280 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "Order",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "status", "type": "string", "required": true },
+            { "name": "total", "type": "integer", "required": true },
+            { "name": "shippingAddress", "type": "text", "required": true }
+          ],
+          "relations": [{ "target": "User", "type": "many-to-many" }]
+        }
+      },
+      {
+        "id": "user-model",
+        "type": "DataModel",
+        "position": { "x": 400, "y": 280 },
+        "data": {
+          "blockType": "DataModel",
+          "name": "User",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "email", "type": "email", "required": true, "unique": true },
+            { "name": "name", "type": "string", "required": true }
+          ],
+          "relations": []
+        }
+      },
+      {
+        "id": "api-products",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 460 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/products",
+          "auth": "none",
+          "consumedByViews": [],
+          "description": "List products with filters"
+        }
+      },
+      {
+        "id": "api-checkout",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 460 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/checkout",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Create order and process payment"
+        }
+      },
+      {
+        "id": "storefront-view",
+        "type": "View",
+        "position": { "x": 100, "y": 620 },
+        "data": {
+          "blockType": "View",
+          "name": "Storefront",
+          "route": "/",
+          "consumesEndpoints": [],
+          "description": "Product listing and search"
+        }
+      },
+      {
+        "id": "cart-view",
+        "type": "View",
+        "position": { "x": 400, "y": 620 },
+        "data": {
+          "blockType": "View",
+          "name": "Cart & Checkout",
+          "route": "/cart",
+          "consumesEndpoints": [],
+          "description": "Shopping cart and checkout flow"
+        }
+      },
+      {
+        "id": "auth-block",
+        "type": "Auth",
+        "position": { "x": 700, "y": 280 },
+        "data": {
+          "blockType": "Auth",
+          "method": "email-password",
+          "roles": ["customer", "admin"],
+          "protects": []
+        }
+      },
+      {
+        "id": "stripe-int",
+        "type": "Integration",
+        "position": { "x": 700, "y": 460 },
+        "data": {
+          "blockType": "Integration",
+          "service": "Stripe",
+          "purpose": "Payment processing",
+          "usedIn": [],
+          "secretsNeeded": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+        }
+      }
+    ],
+    "edges": [
+      { "id": "e1", "source": "api-products", "target": "product-model", "type": "uses" },
+      { "id": "e2", "source": "api-checkout", "target": "order-model", "type": "uses" },
+      { "id": "e3", "source": "storefront-view", "target": "api-products", "type": "uses" },
+      { "id": "e4", "source": "cart-view", "target": "api-checkout", "type": "uses" },
+      { "id": "e5", "source": "auth-block", "target": "api-checkout", "type": "protects" },
+      { "id": "e6", "source": "storefront-view", "target": "cart-view", "type": "navigatesTo" },
+      { "id": "e7", "source": "integration-stripe", "target": "api-checkout", "type": "uses" }
+    ]
+  }
+}

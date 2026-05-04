@@ -16,7 +16,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
-import { getAllowedConnectionTypes } from "@/lib/blocks/connections";
+import { getAllowedConnectionTypes, getConnectionHint } from "@/lib/blocks/connections";
 import type { BlockType, ConnectionType } from "@/lib/blocks/schemas";
 import { DataModelNode } from "./nodes/DataModelNode";
 import { EndpointNode } from "./nodes/EndpointNode";
@@ -159,7 +159,11 @@ export function Canvas({ onSave }: Props) {
         targetNode.type as BlockType,
       );
       if (allowed.length === 0) {
-        toast.error("Invalid connection between these block types");
+        const hint = getConnectionHint(sourceNode.type as BlockType, targetNode.type as BlockType);
+        toast.error(`Cannot connect ${sourceNode.type} → ${targetNode.type}`, {
+          description: hint,
+          duration: 5000,
+        });
         return;
       }
       addEdge(connection.source, connection.target, allowed[0] as ConnectionType);

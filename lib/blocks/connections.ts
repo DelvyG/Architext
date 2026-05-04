@@ -45,3 +45,27 @@ export function getAllowedConnectionTypes(
   const rule = RULES.find((r) => r.source === sourceType && r.target === targetType);
   return rule?.allowed ?? [];
 }
+
+export function getConnectionHint(sourceType: BlockType, targetType: BlockType): string {
+  // Check if the reverse direction works
+  const reverse = RULES.find((r) => r.source === targetType && r.target === sourceType);
+  if (reverse) {
+    return `Try the other direction: ${targetType} → ${sourceType} (${reverse.allowed.join(", ")})`;
+  }
+
+  // Show what the source CAN connect to
+  const sourceRules = RULES.filter((r) => r.source === sourceType);
+  if (sourceRules.length > 0) {
+    const targets = sourceRules.map((r) => r.target);
+    return `${sourceType} can connect to: ${targets.join(", ")}`;
+  }
+
+  // Show what can connect TO the source (it's always a target)
+  const asTarget = RULES.filter((r) => r.target === sourceType);
+  if (asTarget.length > 0) {
+    const sources = asTarget.map((r) => r.source);
+    return `${sourceType} receives connections from: ${sources.join(", ")}`;
+  }
+
+  return "These block types cannot be connected";
+}
