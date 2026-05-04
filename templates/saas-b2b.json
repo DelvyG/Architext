@@ -14,9 +14,33 @@
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#dbeafe" }
+      },
+      {
+        "id": "grp-api",
+        "type": "Group",
+        "position": { "x": 50, "y": 400 },
+        "data": { "blockType": "Group", "name": "API Layer", "color": "#dcfce7" }
+      },
+      {
+        "id": "grp-frontend",
+        "type": "Group",
+        "position": { "x": 50, "y": 750 },
+        "data": { "blockType": "Group", "name": "Frontend", "color": "#f3e8ff" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 700, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#fef3c7" }
+      },
+      {
         "id": "org-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 100 },
+        "position": { "x": 100, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "Organization",
@@ -24,7 +48,7 @@
             { "name": "id", "type": "uuid", "required": true, "unique": true },
             { "name": "name", "type": "string", "required": true },
             { "name": "slug", "type": "string", "required": true, "unique": true },
-            { "name": "plan", "type": "string", "required": true }
+            { "name": "plan", "type": "string", "required": true, "default": "free" }
           ],
           "relations": []
         }
@@ -32,7 +56,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 100 },
+        "position": { "x": 400, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -48,7 +72,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 250, "y": 300 },
+        "position": { "x": 100, "y": 310 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -57,62 +81,120 @@
         }
       },
       {
-        "id": "dashboard-view",
-        "type": "View",
-        "position": { "x": 100, "y": 450 },
-        "data": {
-          "blockType": "View",
-          "name": "Dashboard",
-          "route": "/dashboard",
-          "consumesEndpoints": [],
-          "description": "Main dashboard with metrics"
-        }
-      },
-      {
-        "id": "settings-view",
-        "type": "View",
-        "position": { "x": 400, "y": 450 },
-        "data": {
-          "blockType": "View",
-          "name": "Settings",
-          "route": "/settings",
-          "consumesEndpoints": []
-        }
-      },
-      {
         "id": "api-users",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 600 },
+        "position": { "x": 100, "y": 480 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
           "path": "/api/users",
-          "auth": "required",
-          "consumedByViews": []
+          "auth": "role-based",
+          "consumedByViews": [],
+          "description": "List org members"
         }
       },
       {
         "id": "api-orgs",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 600 },
+        "position": { "x": 400, "y": 480 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
           "path": "/api/organizations",
           "auth": "required",
-          "consumedByViews": []
+          "consumedByViews": [],
+          "description": "Get org details and settings"
         }
       },
       {
-        "id": "stripe-integration",
+        "id": "api-billing",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 620 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/billing/checkout",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Create Stripe checkout session for plan upgrade"
+        }
+      },
+      {
+        "id": "dashboard-view",
+        "type": "View",
+        "position": { "x": 100, "y": 830 },
+        "data": {
+          "blockType": "View",
+          "name": "Dashboard",
+          "route": "/dashboard",
+          "consumesEndpoints": [],
+          "description": "Main dashboard with KPIs and activity"
+        }
+      },
+      {
+        "id": "settings-view",
+        "type": "View",
+        "position": { "x": 400, "y": 830 },
+        "data": {
+          "blockType": "View",
+          "name": "Settings",
+          "route": "/settings",
+          "consumesEndpoints": [],
+          "description": "Org settings, members, billing"
+        }
+      },
+      {
+        "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 700, "y": 300 },
+        "position": { "x": 750, "y": 130 },
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
-          "purpose": "Subscription billing",
+          "purpose": "Subscription billing and plan management",
           "usedIn": [],
           "secretsNeeded": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+        }
+      },
+      {
+        "id": "security-block",
+        "type": "Security",
+        "position": { "x": 750, "y": 300 },
+        "data": {
+          "blockType": "Security",
+          "name": "API Security",
+          "policies": [
+            "CORS whitelist",
+            "Rate limiting (100 req/min)",
+            "Input validation (Zod)",
+            "CSRF protection",
+            "Tenant isolation"
+          ]
+        }
+      },
+      {
+        "id": "cache-block",
+        "type": "Cache",
+        "position": { "x": 750, "y": 450 },
+        "data": {
+          "blockType": "Cache",
+          "name": "Session & Data Cache",
+          "strategy": "redis",
+          "ttl": "15m"
+        }
+      },
+      {
+        "id": "seo-block",
+        "type": "SEO",
+        "position": { "x": 750, "y": 580 },
+        "data": {
+          "blockType": "SEO",
+          "name": "SEO & Marketing",
+          "strategies": [
+            "Landing page meta tags",
+            "Open Graph for sharing",
+            "Sitemap for public pages",
+            "robots.txt"
+          ]
         }
       }
     ],
@@ -121,7 +203,13 @@
       { "id": "e2", "source": "api-orgs", "target": "org-model", "type": "uses" },
       { "id": "e3", "source": "auth-block", "target": "api-users", "type": "protects" },
       { "id": "e4", "source": "auth-block", "target": "dashboard-view", "type": "protects" },
-      { "id": "e5", "source": "dashboard-view", "target": "settings-view", "type": "navigatesTo" }
+      { "id": "e5", "source": "dashboard-view", "target": "settings-view", "type": "navigatesTo" },
+      { "id": "e6", "source": "security-block", "target": "api-users", "type": "protects" },
+      { "id": "e7", "source": "security-block", "target": "api-orgs", "type": "protects" },
+      { "id": "e8", "source": "cache-block", "target": "api-users", "type": "uses" },
+      { "id": "e9", "source": "settings-view", "target": "api-orgs", "type": "uses" },
+      { "id": "e10", "source": "settings-view", "target": "api-billing", "type": "uses" },
+      { "id": "e11", "source": "seo-block", "target": "dashboard-view", "type": "uses" }
     ]
   }
 }

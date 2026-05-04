@@ -2,22 +2,46 @@
   "slug": "ai-tool",
   "name": { "en": "AI Tool", "es": "Herramienta IA" },
   "description": {
-    "en": "AI-powered tool with prompt management, usage tracking, and API key management",
-    "es": "Herramienta potenciada por IA con gestión de prompts, tracking de uso y gestión de API keys"
+    "en": "AI-powered tool with prompt management, usage tracking, credit system, and multi-model support",
+    "es": "Herramienta IA con gestión de prompts, tracking de uso, sistema de créditos y soporte multi-modelo"
   },
   "suggestedStack": {
     "frontend": "Next.js",
     "backend": "Next.js API Routes",
     "db": "PostgreSQL",
     "hosting": "Vercel",
-    "integrations": ["OpenAI API", "Stripe"]
+    "integrations": ["OpenAI API", "Anthropic API", "Stripe"]
   },
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#dbeafe" }
+      },
+      {
+        "id": "grp-api",
+        "type": "Group",
+        "position": { "x": 50, "y": 450 },
+        "data": { "blockType": "Group", "name": "API Layer", "color": "#dcfce7" }
+      },
+      {
+        "id": "grp-frontend",
+        "type": "Group",
+        "position": { "x": 50, "y": 800 },
+        "data": { "blockType": "Group", "name": "Frontend", "color": "#f3e8ff" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 750, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#fef3c7" }
+      },
+      {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 100 },
+        "position": { "x": 100, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -25,8 +49,8 @@
             { "name": "id", "type": "uuid", "required": true, "unique": true },
             { "name": "email", "type": "email", "required": true, "unique": true },
             { "name": "name", "type": "string", "required": true },
-            { "name": "plan", "type": "string", "required": true },
-            { "name": "creditsRemaining", "type": "integer", "required": true }
+            { "name": "plan", "type": "string", "required": true, "default": "free" },
+            { "name": "creditsRemaining", "type": "integer", "required": true, "default": "100" }
           ],
           "relations": []
         }
@@ -34,7 +58,7 @@
       {
         "id": "prompt-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 100 },
+        "position": { "x": 400, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "Prompt",
@@ -42,7 +66,8 @@
             { "name": "id", "type": "uuid", "required": true, "unique": true },
             { "name": "title", "type": "string", "required": true },
             { "name": "template", "type": "text", "required": true },
-            { "name": "variables", "type": "json", "required": false }
+            { "name": "variables", "type": "json", "required": false },
+            { "name": "isPublic", "type": "boolean", "required": true, "default": "false" }
           ],
           "relations": [{ "target": "User", "type": "many-to-many" }]
         }
@@ -50,7 +75,7 @@
       {
         "id": "generation-model",
         "type": "DataModel",
-        "position": { "x": 700, "y": 100 },
+        "position": { "x": 100, "y": 310 },
         "data": {
           "blockType": "DataModel",
           "name": "Generation",
@@ -59,82 +84,203 @@
             { "name": "input", "type": "text", "required": true },
             { "name": "output", "type": "text", "required": true },
             { "name": "model", "type": "string", "required": true },
-            { "name": "tokensUsed", "type": "integer", "required": true }
+            { "name": "tokensUsed", "type": "integer", "required": true },
+            { "name": "costInCents", "type": "integer", "required": true }
           ],
-          "relations": [{ "target": "Prompt", "type": "many-to-many" }]
+          "relations": [
+            { "target": "Prompt", "type": "many-to-many" },
+            { "target": "User", "type": "many-to-many" }
+          ]
+        }
+      },
+      {
+        "id": "auth-block",
+        "type": "Auth",
+        "position": { "x": 400, "y": 310 },
+        "data": {
+          "blockType": "Auth",
+          "method": "email-password",
+          "roles": ["user", "pro", "admin"],
+          "protects": []
         }
       },
       {
         "id": "api-generate",
         "type": "Endpoint",
-        "position": { "x": 250, "y": 300 },
+        "position": { "x": 100, "y": 530 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
           "path": "/api/generate",
           "auth": "required",
           "consumedByViews": [],
-          "description": "Run AI generation with a prompt template"
+          "description": "Run AI generation, deducts credits, logs usage"
         }
       },
       {
         "id": "api-prompts",
         "type": "Endpoint",
-        "position": { "x": 550, "y": 300 },
+        "position": { "x": 400, "y": 530 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
           "path": "/api/prompts",
           "auth": "required",
           "consumedByViews": [],
-          "description": "List user prompt templates"
+          "description": "List user and public prompts"
+        }
+      },
+      {
+        "id": "api-history",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 670 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/generations",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Generation history with search and filters"
+        }
+      },
+      {
+        "id": "api-billing",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 670 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/billing/purchase-credits",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Buy credits via Stripe"
         }
       },
       {
         "id": "playground-view",
         "type": "View",
-        "position": { "x": 100, "y": 480 },
+        "position": { "x": 100, "y": 880 },
         "data": {
           "blockType": "View",
           "name": "Playground",
           "route": "/playground",
           "consumesEndpoints": [],
-          "description": "Interactive prompt testing interface"
+          "description": "Interactive prompt editor with live AI response"
         }
       },
       {
         "id": "history-view",
         "type": "View",
-        "position": { "x": 400, "y": 480 },
+        "position": { "x": 400, "y": 880 },
         "data": {
           "blockType": "View",
           "name": "History",
           "route": "/history",
           "consumesEndpoints": [],
-          "description": "Past generations with search"
+          "description": "Past generations with search, copy, and re-run"
         }
       },
       {
-        "id": "auth-block",
-        "type": "Auth",
-        "position": { "x": 700, "y": 300 },
+        "id": "prompts-view",
+        "type": "View",
+        "position": { "x": 100, "y": 1010 },
         "data": {
-          "blockType": "Auth",
-          "method": "email-password",
-          "roles": ["user", "admin"],
-          "protects": []
+          "blockType": "View",
+          "name": "Prompt Library",
+          "route": "/prompts",
+          "consumesEndpoints": [],
+          "description": "Browse, create, share prompt templates"
         }
       },
       {
         "id": "openai-int",
         "type": "Integration",
-        "position": { "x": 700, "y": 480 },
+        "position": { "x": 800, "y": 130 },
         "data": {
           "blockType": "Integration",
           "service": "OpenAI",
-          "purpose": "LLM inference for text generation",
+          "purpose": "GPT-4o and GPT-4o-mini inference",
           "usedIn": [],
           "secretsNeeded": ["OPENAI_API_KEY"]
+        }
+      },
+      {
+        "id": "anthropic-int",
+        "type": "Integration",
+        "position": { "x": 800, "y": 270 },
+        "data": {
+          "blockType": "Integration",
+          "service": "Anthropic",
+          "purpose": "Claude inference",
+          "usedIn": [],
+          "secretsNeeded": ["ANTHROPIC_API_KEY"]
+        }
+      },
+      {
+        "id": "stripe-int",
+        "type": "Integration",
+        "position": { "x": 800, "y": 410 },
+        "data": {
+          "blockType": "Integration",
+          "service": "Stripe",
+          "purpose": "Credit purchases and subscription billing",
+          "usedIn": [],
+          "secretsNeeded": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+        }
+      },
+      {
+        "id": "cache-block",
+        "type": "Cache",
+        "position": { "x": 800, "y": 550 },
+        "data": {
+          "blockType": "Cache",
+          "name": "Response Cache",
+          "strategy": "redis",
+          "ttl": "24h",
+          "description": "Cache identical prompt+model combinations to save API costs"
+        }
+      },
+      {
+        "id": "queue-block",
+        "type": "Queue",
+        "position": { "x": 800, "y": 690 },
+        "data": {
+          "blockType": "Queue",
+          "name": "Generation Queue",
+          "broker": "Redis / BullMQ",
+          "events": ["generation.requested", "generation.completed", "credits.depleted"],
+          "description": "Queue for heavy generations to prevent timeouts"
+        }
+      },
+      {
+        "id": "security-block",
+        "type": "Security",
+        "position": { "x": 800, "y": 830 },
+        "data": {
+          "blockType": "Security",
+          "name": "AI Security",
+          "policies": [
+            "Credit check before generation",
+            "Rate limiting (10 req/min free, 60 pro)",
+            "Prompt injection detection",
+            "Output content filtering",
+            "API key encryption at rest"
+          ]
+        }
+      },
+      {
+        "id": "seo-block",
+        "type": "SEO",
+        "position": { "x": 800, "y": 980 },
+        "data": {
+          "blockType": "SEO",
+          "name": "Marketing SEO",
+          "strategies": [
+            "Landing page meta tags",
+            "Public prompt library SEO",
+            "Blog content for AI keywords",
+            "Open Graph previews"
+          ]
         }
       }
     ],
@@ -142,11 +288,17 @@
       { "id": "e1", "source": "api-generate", "target": "generation-model", "type": "uses" },
       { "id": "e2", "source": "api-generate", "target": "prompt-model", "type": "uses" },
       { "id": "e3", "source": "api-prompts", "target": "prompt-model", "type": "uses" },
-      { "id": "e4", "source": "playground-view", "target": "api-generate", "type": "uses" },
-      { "id": "e5", "source": "history-view", "target": "api-prompts", "type": "uses" },
-      { "id": "e6", "source": "auth-block", "target": "api-generate", "type": "protects" },
-      { "id": "e7", "source": "auth-block", "target": "playground-view", "type": "protects" },
-      { "id": "e8", "source": "openai-int", "target": "api-generate", "type": "uses" }
+      { "id": "e4", "source": "api-history", "target": "generation-model", "type": "uses" },
+      { "id": "e5", "source": "playground-view", "target": "api-generate", "type": "uses" },
+      { "id": "e6", "source": "history-view", "target": "api-history", "type": "uses" },
+      { "id": "e7", "source": "prompts-view", "target": "api-prompts", "type": "uses" },
+      { "id": "e8", "source": "auth-block", "target": "api-generate", "type": "protects" },
+      { "id": "e9", "source": "auth-block", "target": "playground-view", "type": "protects" },
+      { "id": "e10", "source": "security-block", "target": "api-generate", "type": "protects" },
+      { "id": "e11", "source": "cache-block", "target": "api-generate", "type": "uses" },
+      { "id": "e12", "source": "api-generate", "target": "queue-block", "type": "uses" },
+      { "id": "e13", "source": "seo-block", "target": "prompts-view", "type": "uses" },
+      { "id": "e14", "source": "playground-view", "target": "history-view", "type": "navigatesTo" }
     ]
   }
 }

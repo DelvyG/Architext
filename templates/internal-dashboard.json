@@ -2,8 +2,8 @@
   "slug": "internal-dashboard",
   "name": { "en": "Internal Dashboard", "es": "Dashboard interno" },
   "description": {
-    "en": "Admin dashboard with metrics, user management, and data tables",
-    "es": "Dashboard administrativo con métricas, gestión de usuarios y tablas de datos"
+    "en": "Admin dashboard with metrics, user management, audit logs, and data tables",
+    "es": "Dashboard administrativo con métricas, gestión de usuarios, logs de auditoría y tablas de datos"
   },
   "suggestedStack": {
     "frontend": "Next.js",
@@ -14,9 +14,21 @@
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#dbeafe" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 650, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure & Security", "color": "#fee2e2" }
+      },
+      {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 100 },
+        "position": { "x": 100, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -25,97 +37,170 @@
             { "name": "email", "type": "email", "required": true, "unique": true },
             { "name": "name", "type": "string", "required": true },
             { "name": "role", "type": "string", "required": true },
-            { "name": "department", "type": "string", "required": false }
+            { "name": "department", "type": "string", "required": false },
+            { "name": "lastLoginAt", "type": "datetime", "required": false }
           ],
           "relations": []
         }
       },
       {
-        "id": "activity-model",
+        "id": "audit-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 100 },
+        "position": { "x": 400, "y": 130 },
         "data": {
           "blockType": "DataModel",
-          "name": "ActivityLog",
+          "name": "AuditLog",
           "fields": [
             { "name": "id", "type": "uuid", "required": true, "unique": true },
             { "name": "action", "type": "string", "required": true },
+            { "name": "resource", "type": "string", "required": true },
             { "name": "details", "type": "json", "required": false },
-            { "name": "timestamp", "type": "datetime", "required": true }
+            { "name": "ipAddress", "type": "string", "required": false }
           ],
           "relations": [{ "target": "User", "type": "many-to-many" }]
         }
       },
       {
+        "id": "auth-block",
+        "type": "Auth",
+        "position": { "x": 100, "y": 320 },
+        "data": {
+          "blockType": "Auth",
+          "method": "email-password",
+          "roles": ["super-admin", "admin", "viewer"],
+          "protects": []
+        }
+      },
+      {
         "id": "api-users",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 300 },
+        "position": { "x": 100, "y": 460 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
           "path": "/api/admin/users",
           "auth": "role-based",
           "consumedByViews": [],
-          "description": "List and filter users"
+          "description": "List, search, filter users with pagination"
         }
       },
       {
         "id": "api-metrics",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 300 },
+        "position": { "x": 400, "y": 460 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
           "path": "/api/admin/metrics",
           "auth": "role-based",
           "consumedByViews": [],
-          "description": "Dashboard KPIs and charts"
+          "description": "Dashboard KPIs, charts, time-series data"
+        }
+      },
+      {
+        "id": "api-audit",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 600 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/admin/audit-log",
+          "auth": "role-based",
+          "consumedByViews": [],
+          "description": "Audit trail with filters by user, action, date"
         }
       },
       {
         "id": "dashboard-view",
         "type": "View",
-        "position": { "x": 250, "y": 480 },
+        "position": { "x": 100, "y": 750 },
         "data": {
           "blockType": "View",
           "name": "Dashboard",
           "route": "/admin",
           "consumesEndpoints": [],
-          "description": "Overview with KPI cards and charts"
+          "description": "Overview with KPI cards, charts, recent activity"
         }
       },
       {
         "id": "users-view",
         "type": "View",
-        "position": { "x": 550, "y": 480 },
+        "position": { "x": 400, "y": 750 },
         "data": {
           "blockType": "View",
           "name": "User Management",
           "route": "/admin/users",
           "consumesEndpoints": [],
-          "description": "User table with CRUD"
+          "description": "User table with CRUD, role assignment, disable/enable"
         }
       },
       {
-        "id": "auth-block",
-        "type": "Auth",
-        "position": { "x": 700, "y": 100 },
+        "id": "audit-view",
+        "type": "View",
+        "position": { "x": 400, "y": 890 },
         "data": {
-          "blockType": "Auth",
-          "method": "email-password",
-          "roles": ["admin", "viewer"],
-          "protects": []
+          "blockType": "View",
+          "name": "Audit Log",
+          "route": "/admin/audit",
+          "consumesEndpoints": [],
+          "description": "Searchable audit trail with export"
+        }
+      },
+      {
+        "id": "security-block",
+        "type": "Security",
+        "position": { "x": 700, "y": 130 },
+        "data": {
+          "blockType": "Security",
+          "name": "Admin Security",
+          "policies": [
+            "IP whitelist for admin",
+            "2FA for super-admin",
+            "Session timeout (30m)",
+            "Audit logging on all mutations",
+            "Role-based access control"
+          ]
+        }
+      },
+      {
+        "id": "cache-block",
+        "type": "Cache",
+        "position": { "x": 700, "y": 310 },
+        "data": {
+          "blockType": "Cache",
+          "name": "Metrics Cache",
+          "strategy": "redis",
+          "ttl": "5m",
+          "description": "Cache expensive metric queries"
+        }
+      },
+      {
+        "id": "cleanup-job",
+        "type": "Job",
+        "position": { "x": 700, "y": 460 },
+        "data": {
+          "blockType": "Job",
+          "name": "AuditLogCleanup",
+          "trigger": "cron",
+          "frequency": "Weekly",
+          "action": "Archive audit logs older than 90 days to cold storage"
         }
       }
     ],
     "edges": [
       { "id": "e1", "source": "api-users", "target": "user-model", "type": "uses" },
-      { "id": "e2", "source": "api-metrics", "target": "activity-model", "type": "uses" },
-      { "id": "e3", "source": "dashboard-view", "target": "api-metrics", "type": "uses" },
-      { "id": "e4", "source": "users-view", "target": "api-users", "type": "uses" },
-      { "id": "e5", "source": "auth-block", "target": "dashboard-view", "type": "protects" },
-      { "id": "e6", "source": "auth-block", "target": "users-view", "type": "protects" },
-      { "id": "e7", "source": "dashboard-view", "target": "users-view", "type": "navigatesTo" }
+      { "id": "e2", "source": "api-metrics", "target": "audit-model", "type": "uses" },
+      { "id": "e3", "source": "api-audit", "target": "audit-model", "type": "uses" },
+      { "id": "e4", "source": "dashboard-view", "target": "api-metrics", "type": "uses" },
+      { "id": "e5", "source": "users-view", "target": "api-users", "type": "uses" },
+      { "id": "e6", "source": "audit-view", "target": "api-audit", "type": "uses" },
+      { "id": "e7", "source": "auth-block", "target": "dashboard-view", "type": "protects" },
+      { "id": "e8", "source": "auth-block", "target": "users-view", "type": "protects" },
+      { "id": "e9", "source": "security-block", "target": "api-users", "type": "protects" },
+      { "id": "e10", "source": "security-block", "target": "api-metrics", "type": "protects" },
+      { "id": "e11", "source": "cache-block", "target": "api-metrics", "type": "uses" },
+      { "id": "e12", "source": "dashboard-view", "target": "users-view", "type": "navigatesTo" },
+      { "id": "e13", "source": "dashboard-view", "target": "audit-view", "type": "navigatesTo" }
     ]
   }
 }

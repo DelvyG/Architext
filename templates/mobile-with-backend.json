@@ -2,22 +2,40 @@
   "slug": "mobile-with-backend",
   "name": { "en": "Mobile App + Backend", "es": "App móvil + Backend" },
   "description": {
-    "en": "REST API backend for a mobile app with auth, push notifications, and file uploads",
-    "es": "Backend API REST para app móvil con auth, notificaciones push y subida de archivos"
+    "en": "REST API backend for a mobile app with auth, push notifications, file uploads, and real-time features",
+    "es": "Backend API REST para app móvil con auth, notificaciones push, subida de archivos y features en tiempo real"
   },
   "suggestedStack": {
     "frontend": "React Native / Flutter",
     "backend": "Next.js API Routes",
     "db": "PostgreSQL",
     "hosting": "Railway / Render",
-    "integrations": ["Firebase Cloud Messaging", "S3"]
+    "integrations": ["Firebase Cloud Messaging", "S3", "Sentry"]
   },
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#dbeafe" }
+      },
+      {
+        "id": "grp-api",
+        "type": "Group",
+        "position": { "x": 50, "y": 400 },
+        "data": { "blockType": "Group", "name": "API Layer", "color": "#dcfce7" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 700, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#fef3c7" }
+      },
+      {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 100 },
+        "position": { "x": 100, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -34,61 +52,40 @@
       {
         "id": "post-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 100 },
+        "position": { "x": 400, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "Post",
           "fields": [
             { "name": "id", "type": "uuid", "required": true, "unique": true },
             { "name": "content", "type": "text", "required": true },
-            { "name": "imageUrl", "type": "string", "required": false }
+            { "name": "imageUrl", "type": "string", "required": false },
+            { "name": "likesCount", "type": "integer", "required": true, "default": "0" }
           ],
           "relations": [{ "target": "User", "type": "many-to-many" }]
         }
       },
       {
-        "id": "api-auth",
-        "type": "Endpoint",
+        "id": "notification-model",
+        "type": "DataModel",
         "position": { "x": 100, "y": 300 },
         "data": {
-          "blockType": "Endpoint",
-          "method": "POST",
-          "path": "/api/auth/login",
-          "auth": "none",
-          "consumedByViews": [],
-          "description": "Login and return JWT"
-        }
-      },
-      {
-        "id": "api-posts",
-        "type": "Endpoint",
-        "position": { "x": 400, "y": 300 },
-        "data": {
-          "blockType": "Endpoint",
-          "method": "GET",
-          "path": "/api/posts",
-          "auth": "required",
-          "consumedByViews": [],
-          "description": "Feed of posts"
-        }
-      },
-      {
-        "id": "api-upload",
-        "type": "Endpoint",
-        "position": { "x": 700, "y": 300 },
-        "data": {
-          "blockType": "Endpoint",
-          "method": "POST",
-          "path": "/api/upload",
-          "auth": "required",
-          "consumedByViews": [],
-          "description": "Upload image to S3"
+          "blockType": "DataModel",
+          "name": "Notification",
+          "fields": [
+            { "name": "id", "type": "uuid", "required": true, "unique": true },
+            { "name": "type", "type": "string", "required": true },
+            { "name": "title", "type": "string", "required": true },
+            { "name": "body", "type": "string", "required": true },
+            { "name": "read", "type": "boolean", "required": true, "default": "false" }
+          ],
+          "relations": [{ "target": "User", "type": "many-to-many" }]
         }
       },
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 250, "y": 480 },
+        "position": { "x": 400, "y": 300 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -97,38 +94,130 @@
         }
       },
       {
+        "id": "api-auth",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 480 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/auth/login",
+          "auth": "none",
+          "consumedByViews": [],
+          "description": "Login, returns JWT"
+        }
+      },
+      {
+        "id": "api-posts",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 480 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/posts",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Paginated feed"
+        }
+      },
+      {
+        "id": "api-upload",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 620 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/upload",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Upload image, returns URL"
+        }
+      },
+      {
+        "id": "api-notifications",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 620 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/notifications",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "List user notifications"
+        }
+      },
+      {
         "id": "fcm-int",
         "type": "Integration",
-        "position": { "x": 550, "y": 480 },
+        "position": { "x": 750, "y": 130 },
         "data": {
           "blockType": "Integration",
           "service": "Firebase Cloud Messaging",
-          "purpose": "Push notifications to mobile devices",
+          "purpose": "Push notifications to iOS and Android",
           "usedIn": [],
           "secretsNeeded": ["FCM_SERVER_KEY"]
         }
       },
       {
-        "id": "s3-int",
-        "type": "Integration",
-        "position": { "x": 700, "y": 480 },
+        "id": "storage-block",
+        "type": "Storage",
+        "position": { "x": 750, "y": 280 },
         "data": {
-          "blockType": "Integration",
-          "service": "AWS S3",
-          "purpose": "Image and file storage",
-          "usedIn": [],
-          "secretsNeeded": ["AWS_ACCESS_KEY", "AWS_SECRET_KEY", "S3_BUCKET"]
+          "blockType": "Storage",
+          "name": "Media Storage",
+          "provider": "S3 / Cloudflare R2",
+          "fileTypes": ["image/jpeg", "image/png", "video/mp4"],
+          "maxSize": "50MB"
+        }
+      },
+      {
+        "id": "queue-block",
+        "type": "Queue",
+        "position": { "x": 750, "y": 430 },
+        "data": {
+          "blockType": "Queue",
+          "name": "Notification Queue",
+          "broker": "Redis / BullMQ",
+          "events": ["post.created", "post.liked", "user.followed"],
+          "description": "Async notification processing"
+        }
+      },
+      {
+        "id": "cache-block",
+        "type": "Cache",
+        "position": { "x": 750, "y": 580 },
+        "data": {
+          "blockType": "Cache",
+          "name": "Feed Cache",
+          "strategy": "redis",
+          "ttl": "2m",
+          "description": "Cache paginated feed queries"
+        }
+      },
+      {
+        "id": "security-block",
+        "type": "Security",
+        "position": { "x": 750, "y": 720 },
+        "data": {
+          "blockType": "Security",
+          "name": "API Security",
+          "policies": [
+            "JWT validation",
+            "Rate limiting (60 req/min)",
+            "File type validation",
+            "Max upload size check",
+            "SQL injection prevention"
+          ]
         }
       },
       {
         "id": "notify-job",
         "type": "Job",
-        "position": { "x": 400, "y": 630 },
+        "position": { "x": 400, "y": 760 },
         "data": {
           "blockType": "Job",
-          "name": "SendPushNotifications",
+          "name": "ProcessNotifications",
           "trigger": "event",
-          "action": "Send push notification when new post is created"
+          "action": "Process notification queue, send push via FCM, save to DB"
         }
       }
     ],
@@ -137,8 +226,13 @@
       { "id": "e2", "source": "api-posts", "target": "post-model", "type": "uses" },
       { "id": "e3", "source": "auth-block", "target": "api-posts", "type": "protects" },
       { "id": "e4", "source": "auth-block", "target": "api-upload", "type": "protects" },
-      { "id": "e5", "source": "s3-int", "target": "api-upload", "type": "uses" },
-      { "id": "e6", "source": "notify-job", "target": "post-model", "type": "uses" }
+      { "id": "e5", "source": "api-upload", "target": "storage-block", "type": "uses" },
+      { "id": "e6", "source": "notify-job", "target": "notification-model", "type": "uses" },
+      { "id": "e7", "source": "notify-job", "target": "queue-block", "type": "uses" },
+      { "id": "e8", "source": "cache-block", "target": "api-posts", "type": "uses" },
+      { "id": "e9", "source": "security-block", "target": "api-upload", "type": "protects" },
+      { "id": "e10", "source": "security-block", "target": "api-posts", "type": "protects" },
+      { "id": "e11", "source": "api-notifications", "target": "notification-model", "type": "uses" }
     ]
   }
 }

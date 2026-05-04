@@ -2,22 +2,46 @@
   "slug": "ecommerce",
   "name": { "en": "E-commerce", "es": "E-commerce" },
   "description": {
-    "en": "Online store with products, cart, checkout, and payment processing",
-    "es": "Tienda online con productos, carrito, checkout y procesamiento de pagos"
+    "en": "Online store with products, cart, checkout, payments, and order management",
+    "es": "Tienda online con productos, carrito, checkout, pagos y gestión de pedidos"
   },
   "suggestedStack": {
     "frontend": "Next.js",
     "backend": "Next.js API Routes",
     "db": "PostgreSQL",
     "hosting": "Vercel / Docker",
-    "integrations": ["Stripe", "SendGrid"]
+    "integrations": ["Stripe", "SendGrid", "S3"]
   },
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#dbeafe" }
+      },
+      {
+        "id": "grp-api",
+        "type": "Group",
+        "position": { "x": 50, "y": 500 },
+        "data": { "blockType": "Group", "name": "API Layer", "color": "#dcfce7" }
+      },
+      {
+        "id": "grp-frontend",
+        "type": "Group",
+        "position": { "x": 50, "y": 850 },
+        "data": { "blockType": "Group", "name": "Frontend", "color": "#f3e8ff" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 750, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#fef3c7" }
+      },
+      {
         "id": "product-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 100 },
+        "position": { "x": 100, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "Product",
@@ -27,7 +51,8 @@
             { "name": "description", "type": "text", "required": false },
             { "name": "price", "type": "integer", "required": true },
             { "name": "stock", "type": "integer", "required": true },
-            { "name": "imageUrl", "type": "string", "required": false }
+            { "name": "imageUrl", "type": "string", "required": false },
+            { "name": "slug", "type": "string", "required": true, "unique": true }
           ],
           "relations": [{ "target": "Category", "type": "many-to-many" }]
         }
@@ -35,7 +60,7 @@
       {
         "id": "category-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 100 },
+        "position": { "x": 400, "y": 130 },
         "data": {
           "blockType": "DataModel",
           "name": "Category",
@@ -50,13 +75,13 @@
       {
         "id": "order-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 280 },
+        "position": { "x": 100, "y": 310 },
         "data": {
           "blockType": "DataModel",
           "name": "Order",
           "fields": [
             { "name": "id", "type": "uuid", "required": true, "unique": true },
-            { "name": "status", "type": "string", "required": true },
+            { "name": "status", "type": "string", "required": true, "default": "pending" },
             { "name": "total", "type": "integer", "required": true },
             { "name": "shippingAddress", "type": "text", "required": true }
           ],
@@ -66,7 +91,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 280 },
+        "position": { "x": 400, "y": 310 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -79,59 +104,9 @@
         }
       },
       {
-        "id": "api-products",
-        "type": "Endpoint",
-        "position": { "x": 100, "y": 460 },
-        "data": {
-          "blockType": "Endpoint",
-          "method": "GET",
-          "path": "/api/products",
-          "auth": "none",
-          "consumedByViews": [],
-          "description": "List products with filters"
-        }
-      },
-      {
-        "id": "api-checkout",
-        "type": "Endpoint",
-        "position": { "x": 400, "y": 460 },
-        "data": {
-          "blockType": "Endpoint",
-          "method": "POST",
-          "path": "/api/checkout",
-          "auth": "required",
-          "consumedByViews": [],
-          "description": "Create order and process payment"
-        }
-      },
-      {
-        "id": "storefront-view",
-        "type": "View",
-        "position": { "x": 100, "y": 620 },
-        "data": {
-          "blockType": "View",
-          "name": "Storefront",
-          "route": "/",
-          "consumesEndpoints": [],
-          "description": "Product listing and search"
-        }
-      },
-      {
-        "id": "cart-view",
-        "type": "View",
-        "position": { "x": 400, "y": 620 },
-        "data": {
-          "blockType": "View",
-          "name": "Cart & Checkout",
-          "route": "/cart",
-          "consumesEndpoints": [],
-          "description": "Shopping cart and checkout flow"
-        }
-      },
-      {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 700, "y": 280 },
+        "position": { "x": 400, "y": 480 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -140,26 +115,198 @@
         }
       },
       {
+        "id": "api-products",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 580 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/products",
+          "auth": "none",
+          "consumedByViews": [],
+          "description": "List products with search and category filters"
+        }
+      },
+      {
+        "id": "api-checkout",
+        "type": "Endpoint",
+        "position": { "x": 400, "y": 580 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "POST",
+          "path": "/api/checkout",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "Create order and Stripe payment session"
+        }
+      },
+      {
+        "id": "api-orders",
+        "type": "Endpoint",
+        "position": { "x": 100, "y": 720 },
+        "data": {
+          "blockType": "Endpoint",
+          "method": "GET",
+          "path": "/api/orders",
+          "auth": "required",
+          "consumedByViews": [],
+          "description": "List user orders with status tracking"
+        }
+      },
+      {
+        "id": "storefront-view",
+        "type": "View",
+        "position": { "x": 100, "y": 930 },
+        "data": {
+          "blockType": "View",
+          "name": "Storefront",
+          "route": "/",
+          "consumesEndpoints": [],
+          "description": "Product catalog with search, filters, and cart"
+        }
+      },
+      {
+        "id": "product-view",
+        "type": "View",
+        "position": { "x": 400, "y": 930 },
+        "data": {
+          "blockType": "View",
+          "name": "Product Detail",
+          "route": "/products/:slug",
+          "consumesEndpoints": [],
+          "description": "Product page with images, description, add to cart"
+        }
+      },
+      {
+        "id": "cart-view",
+        "type": "View",
+        "position": { "x": 100, "y": 1060 },
+        "data": {
+          "blockType": "View",
+          "name": "Cart & Checkout",
+          "route": "/cart",
+          "consumesEndpoints": [],
+          "description": "Shopping cart and Stripe checkout"
+        }
+      },
+      {
+        "id": "admin-view",
+        "type": "View",
+        "position": { "x": 400, "y": 1060 },
+        "data": {
+          "blockType": "View",
+          "name": "Admin Panel",
+          "route": "/admin",
+          "consumesEndpoints": [],
+          "description": "Product management, order tracking, analytics"
+        }
+      },
+      {
         "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 700, "y": 460 },
+        "position": { "x": 800, "y": 130 },
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
-          "purpose": "Payment processing",
+          "purpose": "Payment processing with Checkout Sessions",
           "usedIn": [],
           "secretsNeeded": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+        }
+      },
+      {
+        "id": "email-int",
+        "type": "Integration",
+        "position": { "x": 800, "y": 280 },
+        "data": {
+          "blockType": "Integration",
+          "service": "SendGrid",
+          "purpose": "Order confirmations and shipping notifications",
+          "usedIn": [],
+          "secretsNeeded": ["SENDGRID_API_KEY"]
+        }
+      },
+      {
+        "id": "storage-block",
+        "type": "Storage",
+        "position": { "x": 800, "y": 420 },
+        "data": {
+          "blockType": "Storage",
+          "name": "Product Images",
+          "provider": "S3 / Cloudinary",
+          "fileTypes": ["image/jpeg", "image/png", "image/webp"],
+          "maxSize": "5MB"
+        }
+      },
+      {
+        "id": "cache-block",
+        "type": "Cache",
+        "position": { "x": 800, "y": 560 },
+        "data": {
+          "blockType": "Cache",
+          "name": "Product Cache",
+          "strategy": "redis",
+          "ttl": "10m",
+          "description": "Cache product listings and categories"
+        }
+      },
+      {
+        "id": "security-block",
+        "type": "Security",
+        "position": { "x": 800, "y": 700 },
+        "data": {
+          "blockType": "Security",
+          "name": "Store Security",
+          "policies": [
+            "CSRF protection",
+            "Rate limiting on checkout",
+            "Input sanitization",
+            "PCI compliance (via Stripe)"
+          ]
+        }
+      },
+      {
+        "id": "seo-block",
+        "type": "SEO",
+        "position": { "x": 800, "y": 840 },
+        "data": {
+          "blockType": "SEO",
+          "name": "Store SEO",
+          "strategies": [
+            "Product structured data (JSON-LD)",
+            "Dynamic meta tags per product",
+            "Sitemap with all products",
+            "Open Graph images",
+            "Canonical URLs"
+          ]
+        }
+      },
+      {
+        "id": "order-job",
+        "type": "Job",
+        "position": { "x": 800, "y": 980 },
+        "data": {
+          "blockType": "Job",
+          "name": "OrderStatusSync",
+          "trigger": "webhook",
+          "action": "Update order status from shipping provider webhooks"
         }
       }
     ],
     "edges": [
       { "id": "e1", "source": "api-products", "target": "product-model", "type": "uses" },
       { "id": "e2", "source": "api-checkout", "target": "order-model", "type": "uses" },
-      { "id": "e3", "source": "storefront-view", "target": "api-products", "type": "uses" },
-      { "id": "e4", "source": "cart-view", "target": "api-checkout", "type": "uses" },
-      { "id": "e5", "source": "auth-block", "target": "api-checkout", "type": "protects" },
-      { "id": "e6", "source": "storefront-view", "target": "cart-view", "type": "navigatesTo" },
-      { "id": "e7", "source": "integration-stripe", "target": "api-checkout", "type": "uses" }
+      { "id": "e3", "source": "api-orders", "target": "order-model", "type": "uses" },
+      { "id": "e4", "source": "storefront-view", "target": "api-products", "type": "uses" },
+      { "id": "e5", "source": "cart-view", "target": "api-checkout", "type": "uses" },
+      { "id": "e6", "source": "auth-block", "target": "api-checkout", "type": "protects" },
+      { "id": "e7", "source": "auth-block", "target": "admin-view", "type": "protects" },
+      { "id": "e8", "source": "storefront-view", "target": "product-view", "type": "navigatesTo" },
+      { "id": "e9", "source": "product-view", "target": "cart-view", "type": "navigatesTo" },
+      { "id": "e10", "source": "security-block", "target": "api-checkout", "type": "protects" },
+      { "id": "e11", "source": "cache-block", "target": "api-products", "type": "uses" },
+      { "id": "e12", "source": "seo-block", "target": "product-view", "type": "uses" },
+      { "id": "e13", "source": "seo-block", "target": "storefront-view", "type": "uses" },
+      { "id": "e14", "source": "api-products", "target": "storage-block", "type": "uses" }
     ]
   }
 }
