@@ -9,7 +9,6 @@ import {
   SelectionMode,
   useNodesState,
   useEdgesState,
-  useReactFlow,
   type Connection,
   type Node,
   type Edge,
@@ -286,9 +285,6 @@ export function Canvas({ onSave }: Props) {
       // Skip if the dragged node is a Group itself
       if (draggedNode.type === "Group") return;
 
-      const reactFlowInstance = rfInstance;
-      if (!reactFlowInstance) return;
-
       // Find all group nodes
       const groupNodes = nodes.filter((n) => n.type === "Group");
 
@@ -334,8 +330,6 @@ export function Canvas({ onSave }: Props) {
     },
     [nodes, storeNodes, updateNodePosition, setNodeParent],
   );
-
-  const rfInstance = useReactFlow();
 
   function handleContextAction(action: string) {
     if (!contextMenu) return;
