@@ -134,6 +134,8 @@ export const GroupDataSchema = z.object({
   blockType: z.literal("Group"),
   name: z.string().min(1),
   color: optStr,
+  width: z.number().optional(),
+  height: z.number().optional(),
   description: optStr,
 });
 

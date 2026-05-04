@@ -95,10 +95,15 @@ export function Canvas({ onSave }: Props) {
     if (n.parentId) {
       base.parentId = n.parentId;
       base.extent = "parent" as const;
+      base.expandParent = true;
     }
 
     if (n.type === "Group") {
-      base.style = { width: 400, height: 300 };
+      const gd = n.data as { width?: number; height?: number };
+      base.style = {
+        width: gd.width ?? 400,
+        height: gd.height ?? 300,
+      };
       base.dragHandle = ".group-drag-handle";
     }
 
@@ -194,6 +199,8 @@ export function Canvas({ onSave }: Props) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [nodes, edges, deleteNode, deleteEdge, setNodes]);
 
+  const updateNode = useCanvasStore((s) => s.updateNode);
+
   const handleNodesChange = useCallback(
     (changes: NodeChange[]) => {
       onNodesChange(changes);
@@ -204,9 +211,19 @@ export function Canvas({ onSave }: Props) {
         if (change.type === "remove") {
           deleteNode(change.id);
         }
+        // Persist group resize
+        if (change.type === "dimensions" && change.dimensions) {
+          const node = storeNodes.find((n) => n.id === change.id);
+          if (node?.type === "Group") {
+            updateNode(change.id, {
+              width: change.dimensions.width,
+              height: change.dimensions.height,
+            });
+          }
+        }
       }
     },
-    [onNodesChange, updateNodePosition, deleteNode],
+    [onNodesChange, updateNodePosition, deleteNode, updateNode, storeNodes],
   );
 
   const handleEdgesChange = useCallback(

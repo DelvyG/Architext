@@ -73,6 +73,6 @@ export function defaultBlockData(type: BlockType): BlockData {
         strategies: ["Meta tags", "Sitemap", "Open Graph"],
       };
     case "Group":
-      return { blockType: "Group", name: "Group", color: "#e2e8f0" };
+      return { blockType: "Group", name: "Group", color: "#e2e8f0", width: 400, height: 300 };
   }
 }
