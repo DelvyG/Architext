@@ -17,7 +17,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 70, "y": 90 },
+        "position": { "x": 100, "y": 100 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -34,7 +34,7 @@
       {
         "id": "post-model",
         "type": "DataModel",
-        "position": { "x": 300, "y": 90 },
+        "position": { "x": 100, "y": 380 },
         "data": {
           "blockType": "DataModel",
           "name": "Post",
@@ -50,7 +50,7 @@
       {
         "id": "notification-model",
         "type": "DataModel",
-        "position": { "x": 70, "y": 210 },
+        "position": { "x": 100, "y": 632 },
         "data": {
           "blockType": "DataModel",
           "name": "Notification",
@@ -67,7 +67,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 300, "y": 210 },
+        "position": { "x": 100, "y": 932 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -78,7 +78,7 @@
       {
         "id": "api-auth",
         "type": "Endpoint",
-        "position": { "x": 70, "y": 460 },
+        "position": { "x": 100, "y": 1112 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -91,7 +91,7 @@
       {
         "id": "api-posts",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 460 },
+        "position": { "x": 100, "y": 1262 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -104,7 +104,7 @@
       {
         "id": "api-upload",
         "type": "Endpoint",
-        "position": { "x": 70, "y": 580 },
+        "position": { "x": 100, "y": 1412 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -117,7 +117,7 @@
       {
         "id": "api-notifications",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 580 },
+        "position": { "x": 100, "y": 1562 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -128,9 +128,20 @@
         }
       },
       {
+        "id": "notify-job",
+        "type": "Job",
+        "position": { "x": 100, "y": 1742 },
+        "data": {
+          "blockType": "Job",
+          "name": "ProcessNotifications",
+          "trigger": "event",
+          "action": "Process notification queue, send push via FCM, save to DB"
+        }
+      },
+      {
         "id": "fcm-int",
         "type": "Integration",
-        "position": { "x": 670, "y": 90 },
+        "position": { "x": 1000, "y": 100 },
         "data": {
           "blockType": "Integration",
           "service": "Firebase Cloud Messaging",
@@ -142,7 +153,7 @@
       {
         "id": "storage-block",
         "type": "Storage",
-        "position": { "x": 670, "y": 210 },
+        "position": { "x": 1000, "y": 280 },
         "data": {
           "blockType": "Storage",
           "name": "Media Storage",
@@ -154,7 +165,7 @@
       {
         "id": "queue-block",
         "type": "Queue",
-        "position": { "x": 670, "y": 330 },
+        "position": { "x": 1000, "y": 460 },
         "data": {
           "blockType": "Queue",
           "name": "Notification Queue",
@@ -166,7 +177,7 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 670, "y": 450 },
+        "position": { "x": 1000, "y": 640 },
         "data": {
           "blockType": "Cache",
           "name": "Feed Cache",
@@ -178,7 +189,7 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 670, "y": 570 },
+        "position": { "x": 1000, "y": 820 },
         "data": {
           "blockType": "Security",
           "name": "API Security",
@@ -189,17 +200,6 @@
             "Max upload size check",
             "SQL injection prevention"
           ]
-        }
-      },
-      {
-        "id": "notify-job",
-        "type": "Job",
-        "position": { "x": 670, "y": 690 },
-        "data": {
-          "blockType": "Job",
-          "name": "ProcessNotifications",
-          "trigger": "event",
-          "action": "Process notification queue, send push via FCM, save to DB"
         }
       }
     ],

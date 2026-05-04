@@ -16,7 +16,7 @@
       {
         "id": "org-model",
         "type": "DataModel",
-        "position": { "x": 70, "y": 90 },
+        "position": { "x": 100, "y": 100 },
         "data": {
           "blockType": "DataModel",
           "name": "Organization",
@@ -32,7 +32,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 300, "y": 90 },
+        "position": { "x": 100, "y": 352 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -48,7 +48,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 70, "y": 250 },
+        "position": { "x": 100, "y": 624 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -59,7 +59,7 @@
       {
         "id": "api-users",
         "type": "Endpoint",
-        "position": { "x": 70, "y": 460 },
+        "position": { "x": 100, "y": 804 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -72,7 +72,7 @@
       {
         "id": "api-orgs",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 460 },
+        "position": { "x": 100, "y": 954 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -85,7 +85,7 @@
       {
         "id": "api-billing",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 560 },
+        "position": { "x": 100, "y": 1104 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -98,7 +98,7 @@
       {
         "id": "dashboard-view",
         "type": "View",
-        "position": { "x": 70, "y": 790 },
+        "position": { "x": 550, "y": 100 },
         "data": {
           "blockType": "View",
           "name": "Dashboard",
@@ -110,7 +110,7 @@
       {
         "id": "settings-view",
         "type": "View",
-        "position": { "x": 300, "y": 790 },
+        "position": { "x": 550, "y": 250 },
         "data": {
           "blockType": "View",
           "name": "Settings",
@@ -122,7 +122,7 @@
       {
         "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 620, "y": 90 },
+        "position": { "x": 1000, "y": 100 },
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
@@ -134,7 +134,7 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 620, "y": 190 },
+        "position": { "x": 1000, "y": 280 },
         "data": {
           "blockType": "Security",
           "name": "API Security",
@@ -150,7 +150,7 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 620, "y": 300 },
+        "position": { "x": 1000, "y": 460 },
         "data": {
           "blockType": "Cache",
           "name": "Session & Data Cache",
@@ -161,7 +161,7 @@
       {
         "id": "seo-block",
         "type": "SEO",
-        "position": { "x": 620, "y": 400 },
+        "position": { "x": 550, "y": 430 },
         "data": {
           "blockType": "SEO",
           "name": "SEO & Marketing",

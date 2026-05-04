@@ -17,7 +17,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 70, "y": 90 },
+        "position": { "x": 100, "y": 100 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -34,7 +34,7 @@
       {
         "id": "prompt-model",
         "type": "DataModel",
-        "position": { "x": 300, "y": 90 },
+        "position": { "x": 100, "y": 380 },
         "data": {
           "blockType": "DataModel",
           "name": "Prompt",
@@ -51,7 +51,7 @@
       {
         "id": "generation-model",
         "type": "DataModel",
-        "position": { "x": 70, "y": 210 },
+        "position": { "x": 100, "y": 660 },
         "data": {
           "blockType": "DataModel",
           "name": "Generation",
@@ -72,7 +72,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 300, "y": 210 },
+        "position": { "x": 100, "y": 988 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -83,7 +83,7 @@
       {
         "id": "api-generate",
         "type": "Endpoint",
-        "position": { "x": 70, "y": 460 },
+        "position": { "x": 100, "y": 1168 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -96,7 +96,7 @@
       {
         "id": "api-prompts",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 460 },
+        "position": { "x": 100, "y": 1318 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -109,7 +109,7 @@
       {
         "id": "api-history",
         "type": "Endpoint",
-        "position": { "x": 70, "y": 580 },
+        "position": { "x": 100, "y": 1468 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -122,7 +122,7 @@
       {
         "id": "api-billing",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 580 },
+        "position": { "x": 100, "y": 1618 },
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -135,7 +135,7 @@
       {
         "id": "playground-view",
         "type": "View",
-        "position": { "x": 70, "y": 790 },
+        "position": { "x": 550, "y": 100 },
         "data": {
           "blockType": "View",
           "name": "Playground",
@@ -147,7 +147,7 @@
       {
         "id": "history-view",
         "type": "View",
-        "position": { "x": 300, "y": 790 },
+        "position": { "x": 550, "y": 250 },
         "data": {
           "blockType": "View",
           "name": "History",
@@ -159,7 +159,7 @@
       {
         "id": "prompts-view",
         "type": "View",
-        "position": { "x": 70, "y": 910 },
+        "position": { "x": 550, "y": 400 },
         "data": {
           "blockType": "View",
           "name": "Prompt Library",
@@ -169,9 +169,24 @@
         }
       },
       {
+        "id": "seo-block",
+        "type": "SEO",
+        "position": { "x": 550, "y": 580 },
+        "data": {
+          "blockType": "SEO",
+          "name": "Marketing SEO",
+          "strategies": [
+            "Landing page meta tags",
+            "Public prompt library SEO",
+            "Blog content for AI keywords",
+            "Open Graph previews"
+          ]
+        }
+      },
+      {
         "id": "openai-int",
         "type": "Integration",
-        "position": { "x": 720, "y": 90 },
+        "position": { "x": 1000, "y": 100 },
         "data": {
           "blockType": "Integration",
           "service": "OpenAI",
@@ -183,7 +198,7 @@
       {
         "id": "anthropic-int",
         "type": "Integration",
-        "position": { "x": 720, "y": 210 },
+        "position": { "x": 1000, "y": 250 },
         "data": {
           "blockType": "Integration",
           "service": "Anthropic",
@@ -195,7 +210,7 @@
       {
         "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 720, "y": 330 },
+        "position": { "x": 1000, "y": 400 },
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
@@ -207,7 +222,7 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 720, "y": 450 },
+        "position": { "x": 1000, "y": 580 },
         "data": {
           "blockType": "Cache",
           "name": "Response Cache",
@@ -219,7 +234,7 @@
       {
         "id": "queue-block",
         "type": "Queue",
-        "position": { "x": 720, "y": 570 },
+        "position": { "x": 1000, "y": 760 },
         "data": {
           "blockType": "Queue",
           "name": "Generation Queue",
@@ -231,7 +246,7 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 720, "y": 690 },
+        "position": { "x": 1000, "y": 940 },
         "data": {
           "blockType": "Security",
           "name": "AI Security",
@@ -241,21 +256,6 @@
             "Prompt injection detection",
             "Output content filtering",
             "API key encryption at rest"
-          ]
-        }
-      },
-      {
-        "id": "seo-block",
-        "type": "SEO",
-        "position": { "x": 720, "y": 810 },
-        "data": {
-          "blockType": "SEO",
-          "name": "Marketing SEO",
-          "strategies": [
-            "Landing page meta tags",
-            "Public prompt library SEO",
-            "Blog content for AI keywords",
-            "Open Graph previews"
           ]
         }
       }

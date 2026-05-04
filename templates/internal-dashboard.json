@@ -16,7 +16,7 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 70, "y": 90 },
+        "position": { "x": 100, "y": 100 },
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -34,7 +34,7 @@
       {
         "id": "audit-model",
         "type": "DataModel",
-        "position": { "x": 300, "y": 90 },
+        "position": { "x": 100, "y": 408 },
         "data": {
           "blockType": "DataModel",
           "name": "AuditLog",
@@ -51,7 +51,7 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 70, "y": 210 },
+        "position": { "x": 100, "y": 708 },
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -62,7 +62,7 @@
       {
         "id": "api-users",
         "type": "Endpoint",
-        "position": { "x": 70, "y": 330 },
+        "position": { "x": 100, "y": 888 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -75,7 +75,7 @@
       {
         "id": "api-metrics",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 330 },
+        "position": { "x": 100, "y": 1038 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -88,7 +88,7 @@
       {
         "id": "api-audit",
         "type": "Endpoint",
-        "position": { "x": 300, "y": 450 },
+        "position": { "x": 100, "y": 1188 },
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -99,9 +99,21 @@
         }
       },
       {
+        "id": "cleanup-job",
+        "type": "Job",
+        "position": { "x": 100, "y": 1368 },
+        "data": {
+          "blockType": "Job",
+          "name": "AuditLogCleanup",
+          "trigger": "cron",
+          "frequency": "Weekly",
+          "action": "Archive audit logs older than 90 days to cold storage"
+        }
+      },
+      {
         "id": "dashboard-view",
         "type": "View",
-        "position": { "x": 100, "y": 700 },
+        "position": { "x": 550, "y": 100 },
         "data": {
           "blockType": "View",
           "name": "Dashboard",
@@ -113,7 +125,7 @@
       {
         "id": "users-view",
         "type": "View",
-        "position": { "x": 400, "y": 700 },
+        "position": { "x": 550, "y": 250 },
         "data": {
           "blockType": "View",
           "name": "User Management",
@@ -125,7 +137,7 @@
       {
         "id": "audit-view",
         "type": "View",
-        "position": { "x": 400, "y": 840 },
+        "position": { "x": 550, "y": 400 },
         "data": {
           "blockType": "View",
           "name": "Audit Log",
@@ -137,7 +149,7 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 720, "y": 90 },
+        "position": { "x": 1000, "y": 100 },
         "data": {
           "blockType": "Security",
           "name": "Admin Security",
@@ -153,25 +165,13 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 720, "y": 210 },
+        "position": { "x": 1000, "y": 280 },
         "data": {
           "blockType": "Cache",
           "name": "Metrics Cache",
           "strategy": "redis",
           "ttl": "5m",
           "description": "Cache expensive metric queries"
-        }
-      },
-      {
-        "id": "cleanup-job",
-        "type": "Job",
-        "position": { "x": 720, "y": 330 },
-        "data": {
-          "blockType": "Job",
-          "name": "AuditLogCleanup",
-          "trigger": "cron",
-          "frequency": "Weekly",
-          "action": "Archive audit logs older than 90 days to cold storage"
         }
       }
     ],
