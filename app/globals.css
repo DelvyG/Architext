@@ -127,4 +127,10 @@
   html {
     @apply font-sans;
   }
+  select,
+  input,
+  textarea,
+  button {
+    font-family: inherit;
+  }
 }
