@@ -20,8 +20,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { MoreVertical, Plus } from "lucide-react";
-import { deleteProject, renameProject } from "../actions";
+import { MoreVertical, Plus, Copy } from "lucide-react";
+import { deleteProject, renameProject, duplicateProject } from "../actions";
 
 type Project = {
   id: string;
@@ -40,6 +40,8 @@ export function ProjectsList({ projects }: Props) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [renameId, setRenameId] = useState<string | null>(null);
   const [renameName, setRenameName] = useState("");
+  const [duplicateId, setDuplicateId] = useState<string | null>(null);
+  const [duplicateName, setDuplicateName] = useState("");
 
   async function handleDelete() {
     if (!deleteId) return;
@@ -53,6 +55,14 @@ export function ProjectsList({ projects }: Props) {
     await renameProject(renameId, renameName.trim());
     setRenameId(null);
     setRenameName("");
+    router.refresh();
+  }
+
+  async function handleDuplicate() {
+    if (!duplicateId) return;
+    await duplicateProject(duplicateId, duplicateName.trim() || undefined);
+    setDuplicateId(null);
+    setDuplicateName("");
     router.refresh();
   }
 
@@ -101,6 +111,15 @@ export function ProjectsList({ projects }: Props) {
                         {t("rename")}
                       </DropdownMenuItem>
                       <DropdownMenuItem
+                        onClick={() => {
+                          setDuplicateId(project.id);
+                          setDuplicateName(`${project.name} (copy)`);
+                        }}
+                      >
+                        <Copy className="mr-2 h-3.5 w-3.5" />
+                        Duplicate
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
                         className="text-destructive"
                         onClick={() => setDeleteId(project.id)}
                       >
@@ -146,6 +165,25 @@ export function ProjectsList({ projects }: Props) {
               {t("cancel")}
             </Button>
             <Button onClick={handleRename}>{t("rename")}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!duplicateId} onOpenChange={() => setDuplicateId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Duplicate project</DialogTitle>
+          </DialogHeader>
+          <Input
+            value={duplicateName}
+            onChange={(e) => setDuplicateName(e.target.value)}
+            placeholder="Name for the copy"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDuplicateId(null)}>
+              {t("cancel")}
+            </Button>
+            <Button onClick={handleDuplicate}>Duplicate</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

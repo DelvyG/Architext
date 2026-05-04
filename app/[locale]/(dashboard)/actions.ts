@@ -82,3 +82,33 @@ export async function renameProject(rawId: unknown, rawName: unknown) {
     data: { name },
   });
 }
+
+export async function duplicateProject(projectId: string, newName?: string) {
+  const session = await requireSession();
+
+  const original = await prisma.project.findFirst({
+    where: { id: projectId, ownerId: session.user.id },
+    select: {
+      name: true,
+      description: true,
+      canvas: true,
+      stack: true,
+      language: true,
+    },
+  });
+  if (!original) throw new Error("Project not found");
+
+  const project = await prisma.project.create({
+    data: {
+      name: newName || `${original.name} (copy)`,
+      description: original.description,
+      canvas: original.canvas ?? { nodes: [], edges: [] },
+      stack: original.stack ?? undefined,
+      language: original.language,
+      ownerId: session.user.id,
+    },
+    select: { id: true },
+  });
+
+  return project;
+}
