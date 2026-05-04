@@ -94,7 +94,14 @@ function CanvasInner({ onSave }: Props) {
   } | null>(null);
 
   function mapToRfNodes(list: typeof storeNodes): Node[] {
-    return list.map((n) => {
+    // Groups must come before their children for React Flow
+    const sorted = [...list].sort((a, b) => {
+      if (a.type === "Group" && b.type !== "Group") return -1;
+      if (a.type !== "Group" && b.type === "Group") return 1;
+      return 0;
+    });
+
+    return sorted.map((n) => {
       const base: Node = {
         id: n.id,
         type: n.type,
@@ -103,13 +110,12 @@ function CanvasInner({ onSave }: Props) {
       };
       if (n.parentId) {
         base.parentId = n.parentId;
-        base.extent = "parent" as const;
-        base.expandParent = true;
       }
       if (n.type === "Group") {
         const gd = n.data as { width?: number; height?: number };
         base.style = { width: gd.width ?? 400, height: gd.height ?? 300 };
         base.dragHandle = ".group-drag-handle";
+        base.zIndex = -1;
       }
       return base;
     });

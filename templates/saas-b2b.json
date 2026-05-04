@@ -17,25 +17,49 @@
         "id": "grp-data",
         "type": "Group",
         "position": { "x": 50, "y": 50 },
-        "data": { "blockType": "Group", "name": "Data Layer", "color": "#3b82f6" }
+        "data": {
+          "blockType": "Group",
+          "name": "Data Layer",
+          "color": "#3b82f6",
+          "width": 500,
+          "height": 300
+        }
       },
       {
         "id": "grp-api",
         "type": "Group",
         "position": { "x": 50, "y": 420 },
-        "data": { "blockType": "Group", "name": "API Layer", "color": "#22c55e" }
+        "data": {
+          "blockType": "Group",
+          "name": "API Layer",
+          "color": "#22c55e",
+          "width": 500,
+          "height": 300
+        }
       },
       {
         "id": "grp-frontend",
         "type": "Group",
         "position": { "x": 50, "y": 750 },
-        "data": { "blockType": "Group", "name": "Frontend", "color": "#a855f7" }
+        "data": {
+          "blockType": "Group",
+          "name": "Frontend",
+          "color": "#a855f7",
+          "width": 500,
+          "height": 200
+        }
       },
       {
         "id": "grp-infra",
         "type": "Group",
         "position": { "x": 600, "y": 50 },
-        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#f59e0b" }
+        "data": {
+          "blockType": "Group",
+          "name": "Infrastructure",
+          "color": "#f59e0b",
+          "width": 300,
+          "height": 540
+        }
       },
 
       {
