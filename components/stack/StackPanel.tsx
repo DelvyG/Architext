@@ -335,7 +335,10 @@ export function StackPanel({ projectId, open, onClose }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto"
+        style={{ width: "90vw", maxWidth: 900 }}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <span className="text-lg">Tech Stack Configuration</span>
