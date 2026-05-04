@@ -7,7 +7,7 @@ const FieldSchema = z.object({
   type: z.string().min(1),
   required: z.boolean(),
   unique: z.boolean().optional(),
-  default: z.string().optional(),
+  default: z.coerce.string().optional(),
   description: z.string().optional(),
 });
 

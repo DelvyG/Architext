@@ -4,7 +4,6 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
 import { Send } from "lucide-react";
@@ -129,20 +128,36 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
         )}
         <div ref={messagesEndRef} />
       </div>
-      <form onSubmit={onSubmit} className="flex gap-2 border-t p-3">
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder={isEmpty ? "Describe your project..." : "Ask about your architecture..."}
-          disabled={generating}
-        />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={!inputValue.trim() || generating || status === "streaming"}
-        >
-          <Send className="h-4 w-4" />
-        </Button>
+      <form onSubmit={onSubmit} className="border-t p-3">
+        <div className="flex gap-2">
+          <textarea
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (inputValue.trim()) {
+                  e.currentTarget.form?.requestSubmit();
+                }
+              }
+            }}
+            placeholder={isEmpty ? "Describe your project..." : "Ask about your architecture..."}
+            disabled={generating}
+            rows={3}
+            className="flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
+          />
+          <Button
+            type="submit"
+            size="icon"
+            className="mt-auto"
+            disabled={!inputValue.trim() || generating || status === "streaming"}
+          >
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Enter to send, Shift+Enter for new line
+        </p>
       </form>
     </div>
   );
