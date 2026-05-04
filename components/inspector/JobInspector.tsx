@@ -3,6 +3,13 @@
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { JobData } from "@/lib/blocks/schemas";
 
 type Props = { nodeId: string; data: JobData };
@@ -18,17 +25,19 @@ export function JobInspector({ nodeId, data }: Props) {
       </div>
       <div className="space-y-1.5">
         <Label>Trigger</Label>
-        <select
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+        <Select
           value={data.trigger}
-          onChange={(e) =>
-            updateNode(nodeId, { trigger: e.target.value as "cron" | "webhook" | "event" })
-          }
+          onValueChange={(v) => updateNode(nodeId, { trigger: v as JobData["trigger"] })}
         >
-          <option value="cron">Cron</option>
-          <option value="webhook">Webhook</option>
-          <option value="event">Event</option>
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="cron">Cron</SelectItem>
+            <SelectItem value="webhook">Webhook</SelectItem>
+            <SelectItem value="event">Event</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-1.5">
         <Label>Frequency</Label>

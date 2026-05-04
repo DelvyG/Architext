@@ -14,6 +14,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { PROVIDERS, type ProviderId, PROVIDER_IDS } from "@/lib/ai/providers";
 import { addApiKey, setActiveApiKey, deleteApiKey, testApiKeyConnection } from "./actions";
 import { Check, Key, Plus, Trash2, Zap } from "lucide-react";
@@ -151,17 +158,18 @@ export function ApiKeysManager({ keys }: Props) {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Provider</Label>
-              <select
-                value={newProvider}
-                onChange={(e) => setNewProvider(e.target.value as ProviderId)}
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
-              >
-                {PROVIDER_IDS.map((id) => (
-                  <option key={id} value={id}>
-                    {PROVIDERS[id].label}
-                  </option>
-                ))}
-              </select>
+              <Select value={newProvider} onValueChange={(v) => setNewProvider(v as ProviderId)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PROVIDER_IDS.map((id) => (
+                    <SelectItem key={id} value={id}>
+                      {PROVIDERS[id].label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-2">
               <Label>Label (optional)</Label>

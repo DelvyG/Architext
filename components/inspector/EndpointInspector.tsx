@@ -3,6 +3,13 @@
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { EndpointData } from "@/lib/blocks/schemas";
 
 type Props = { nodeId: string; data: EndpointData };
@@ -14,19 +21,21 @@ export function EndpointInspector({ nodeId, data }: Props) {
     <div className="space-y-3">
       <div className="space-y-1.5">
         <Label>Method</Label>
-        <select
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+        <Select
           value={data.method}
-          onChange={(e) =>
-            updateNode(nodeId, {
-              method: e.target.value as "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
-            })
-          }
+          onValueChange={(v) => updateNode(nodeId, { method: v as EndpointData["method"] })}
         >
-          {["GET", "POST", "PUT", "PATCH", "DELETE"].map((m) => (
-            <option key={m}>{m}</option>
-          ))}
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {["GET", "POST", "PUT", "PATCH", "DELETE"].map((m) => (
+              <SelectItem key={m} value={m}>
+                {m}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-1.5">
         <Label>Path</Label>
@@ -34,17 +43,19 @@ export function EndpointInspector({ nodeId, data }: Props) {
       </div>
       <div className="space-y-1.5">
         <Label>Auth</Label>
-        <select
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+        <Select
           value={data.auth}
-          onChange={(e) =>
-            updateNode(nodeId, { auth: e.target.value as "none" | "required" | "role-based" })
-          }
+          onValueChange={(v) => updateNode(nodeId, { auth: v as EndpointData["auth"] })}
         >
-          <option value="none">None</option>
-          <option value="required">Required</option>
-          <option value="role-based">Role-based</option>
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">None</SelectItem>
+            <SelectItem value="required">Required</SelectItem>
+            <SelectItem value="role-based">Role-based</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-1.5">
         <Label>Description</Label>

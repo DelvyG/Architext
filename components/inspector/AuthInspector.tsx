@@ -3,6 +3,13 @@
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { AuthData } from "@/lib/blocks/schemas";
 
 type Props = { nodeId: string; data: AuthData };
@@ -14,20 +21,20 @@ export function AuthInspector({ nodeId, data }: Props) {
     <div className="space-y-3">
       <div className="space-y-1.5">
         <Label>Method</Label>
-        <select
-          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+        <Select
           value={data.method}
-          onChange={(e) =>
-            updateNode(nodeId, {
-              method: e.target.value as "email-password" | "oauth" | "magic-link" | "api-key",
-            })
-          }
+          onValueChange={(v) => updateNode(nodeId, { method: v as AuthData["method"] })}
         >
-          <option value="email-password">Email/Password</option>
-          <option value="oauth">OAuth</option>
-          <option value="magic-link">Magic Link</option>
-          <option value="api-key">API Key</option>
-        </select>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="email-password">Email/Password</SelectItem>
+            <SelectItem value="oauth">OAuth</SelectItem>
+            <SelectItem value="magic-link">Magic Link</SelectItem>
+            <SelectItem value="api-key">API Key</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-1.5">
         <Label>Roles (comma-separated)</Label>

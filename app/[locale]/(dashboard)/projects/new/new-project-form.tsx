@@ -7,15 +7,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { createProject } from "../../actions";
 
 const TEMPLATES = [
-  { slug: "blank", label: "Blank project", labelEs: "Proyecto vacío" },
-  { slug: "saas-b2b", label: "B2B SaaS", labelEs: "SaaS B2B" },
-  { slug: "ecommerce", label: "E-commerce", labelEs: "E-commerce" },
-  { slug: "internal-dashboard", label: "Internal Dashboard", labelEs: "Dashboard interno" },
-  { slug: "mobile-with-backend", label: "Mobile + Backend", labelEs: "App móvil + Backend" },
-  { slug: "ai-tool", label: "AI Tool", labelEs: "Herramienta IA" },
+  { slug: "blank", label: "Blank project" },
+  { slug: "saas-b2b", label: "B2B SaaS" },
+  { slug: "ecommerce", label: "E-commerce" },
+  { slug: "internal-dashboard", label: "Internal Dashboard" },
+  { slug: "mobile-with-backend", label: "Mobile + Backend" },
+  { slug: "ai-tool", label: "AI Tool" },
 ];
 
 export function NewProjectForm() {
@@ -23,6 +30,7 @@ export function NewProjectForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [template, setTemplate] = useState("blank");
+  const [language, setLanguage] = useState("en");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -31,7 +39,6 @@ export function NewProjectForm() {
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
     const description = (formData.get("description") as string) || undefined;
-    const language = formData.get("language") as string;
 
     const result = await createProject({
       name,
@@ -65,16 +72,16 @@ export function NewProjectForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="language">{t("language")}</Label>
-            <select
-              id="language"
-              name="language"
-              defaultValue="en"
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
-            >
-              <option value="en">English</option>
-              <option value="es">Español</option>
-            </select>
+            <Label>{t("language")}</Label>
+            <Select value={language} onValueChange={(v) => v && setLanguage(v)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="es">Español</SelectItem>
+              </SelectContent>
+            </Select>
             <p className="text-xs text-muted-foreground">{t("languageHint")}</p>
           </div>
 
