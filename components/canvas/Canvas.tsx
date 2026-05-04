@@ -94,23 +94,32 @@ function CanvasInner({ onSave }: Props) {
   } | null>(null);
 
   function mapToRfNodes(list: typeof storeNodes): Node[] {
-    // Groups must come before their children for React Flow
-    const sorted = [...list].sort((a, b) => {
-      if (a.type === "Group" && b.type !== "Group") return -1;
-      if (a.type !== "Group" && b.type === "Group") return 1;
-      return 0;
-    });
+    // Build a map of group positions for converting child relative positions to absolute
+    const groupMap = new Map<string, { x: number; y: number }>();
+    for (const n of list) {
+      if (n.type === "Group") {
+        groupMap.set(n.id, n.position);
+      }
+    }
 
-    return sorted.map((n) => {
+    return list.map((n) => {
       const base: Node = {
         id: n.id,
         type: n.type,
         position: n.position,
         data: n.data,
       };
-      if (n.parentId) {
-        base.parentId = n.parentId;
+
+      // If node has a parentId, convert relative position to absolute
+      // (we don't use React Flow's parentId — it's buggy)
+      if (n.parentId && groupMap.has(n.parentId)) {
+        const parent = groupMap.get(n.parentId)!;
+        base.position = {
+          x: parent.x + n.position.x,
+          y: parent.y + n.position.y,
+        };
       }
+
       if (n.type === "Group") {
         const gd = n.data as { width?: number; height?: number };
         base.style = { width: gd.width ?? 400, height: gd.height ?? 300 };
