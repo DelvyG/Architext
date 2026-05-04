@@ -7,8 +7,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import {
   Plus,
+  LayoutGrid,
   Database,
   Globe,
   Layout,
@@ -26,6 +28,7 @@ import {
 } from "lucide-react";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { BlockType } from "@/lib/blocks/schemas";
+import { toast } from "sonner";
 
 const BLOCK_CATEGORIES = [
   {
@@ -64,10 +67,22 @@ const BLOCK_CATEGORIES = [
   },
 ];
 
+// Layout order: rows from top to bottom
+const LAYOUT_ROWS: BlockType[][] = [
+  ["DataModel"],
+  ["Auth"],
+  ["Endpoint"],
+  ["View"],
+  ["UserFlow"],
+  ["Integration", "Security", "Cache", "Queue", "Storage", "SEO", "Job", "Note", "Group"],
+];
+
 let counter = 0;
 
 export function CanvasToolbar() {
   const addNode = useCanvasStore((s) => s.addNode);
+  const nodes = useCanvasStore((s) => s.nodes);
+  const updateNodePosition = useCanvasStore((s) => s.updateNodePosition);
 
   function handleAddBlock(type: BlockType) {
     counter++;
@@ -76,8 +91,33 @@ export function CanvasToolbar() {
     addNode(type, { x, y });
   }
 
+  function handleAutoLayout() {
+    const PADDING_X = 280;
+    const PADDING_Y = 40;
+    let currentY = 60;
+
+    for (const rowTypes of LAYOUT_ROWS) {
+      const rowNodes = nodes.filter((n) => rowTypes.includes(n.type));
+      if (rowNodes.length === 0) continue;
+
+      let maxH = 0;
+      rowNodes.forEach((node, i) => {
+        updateNodePosition(node.id, { x: 60 + i * PADDING_X, y: currentY });
+        // Estimate height: DataModels are taller
+        const h =
+          node.type === "DataModel"
+            ? 60 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
+            : 80;
+        if (h > maxH) maxH = h;
+      });
+
+      currentY += maxH + PADDING_Y;
+    }
+    toast.success("Layout organized");
+  }
+
   return (
-    <div className="absolute left-3 top-3 z-10">
+    <div className="absolute left-3 top-3 z-10 flex gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger className="inline-flex h-8 items-center gap-1.5 rounded-md border bg-background px-3 text-sm font-medium shadow-sm hover:bg-muted">
           <Plus className="h-4 w-4" />
@@ -104,6 +144,10 @@ export function CanvasToolbar() {
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
+      <Button variant="outline" size="sm" className="h-8 gap-1.5" onClick={handleAutoLayout}>
+        <LayoutGrid className="h-4 w-4" />
+        Auto layout
+      </Button>
     </div>
   );
 }
