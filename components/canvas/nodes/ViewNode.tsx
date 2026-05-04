@@ -8,6 +8,7 @@ import type { ViewData } from "@/lib/blocks/schemas";
 export function ViewNode({ id, data, selected }: NodeProps & { data: ViewData }) {
   return (
     <BaseNode
+      accentColor="#a855f7"
       id={id}
       selected={selected}
       icon={<Layout className="h-3.5 w-3.5 text-purple-700" />}

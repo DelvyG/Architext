@@ -8,6 +8,7 @@ import type { QueueData } from "@/lib/blocks/schemas";
 export function QueueNode({ id, data, selected }: NodeProps & { data: QueueData }) {
   return (
     <BaseNode
+      accentColor="#f59e0b"
       id={id}
       selected={selected}
       icon={<ListOrdered className="h-3.5 w-3.5 text-indigo-700" />}

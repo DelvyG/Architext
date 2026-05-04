@@ -8,6 +8,7 @@ import type { AuthData } from "@/lib/blocks/schemas";
 export function AuthNode({ id, data, selected }: NodeProps & { data: AuthData }) {
   return (
     <BaseNode
+      accentColor="#22c55e"
       id={id}
       selected={selected}
       icon={<Shield className="h-3.5 w-3.5 text-red-700" />}

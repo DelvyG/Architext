@@ -8,6 +8,7 @@ import type { NoteData } from "@/lib/blocks/schemas";
 export function NoteNode({ id, data, selected }: NodeProps & { data: NoteData }) {
   return (
     <BaseNode
+      accentColor="#a855f7"
       id={id}
       selected={selected}
       icon={<StickyNote className="h-3.5 w-3.5 text-yellow-700" />}

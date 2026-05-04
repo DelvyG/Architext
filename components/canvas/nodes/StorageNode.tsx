@@ -8,6 +8,7 @@ import type { StorageData } from "@/lib/blocks/schemas";
 export function StorageNode({ id, data, selected }: NodeProps & { data: StorageData }) {
   return (
     <BaseNode
+      accentColor="#f59e0b"
       id={id}
       selected={selected}
       icon={<HardDrive className="h-3.5 w-3.5 text-slate-700" />}

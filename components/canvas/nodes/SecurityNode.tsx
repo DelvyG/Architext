@@ -8,6 +8,7 @@ import type { SecurityData } from "@/lib/blocks/schemas";
 export function SecurityNode({ id, data, selected }: NodeProps & { data: SecurityData }) {
   return (
     <BaseNode
+      accentColor="#f59e0b"
       id={id}
       selected={selected}
       icon={<ShieldCheck className="h-3.5 w-3.5 text-rose-700" />}

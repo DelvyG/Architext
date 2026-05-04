@@ -8,6 +8,7 @@ import type { UserFlowData } from "@/lib/blocks/schemas";
 export function UserFlowNode({ id, data, selected }: NodeProps & { data: UserFlowData }) {
   return (
     <BaseNode
+      accentColor="#a855f7"
       id={id}
       selected={selected}
       icon={<GitBranch className="h-3.5 w-3.5 text-cyan-700" />}

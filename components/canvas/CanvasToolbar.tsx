@@ -67,14 +67,14 @@ const BLOCK_CATEGORIES = [
   },
 ];
 
-// Layout order: rows from top to bottom
-const LAYOUT_ROWS: BlockType[][] = [
-  ["DataModel"],
-  ["Auth"],
-  ["Endpoint"],
-  ["View"],
-  ["UserFlow"],
-  ["Integration", "Security", "Cache", "Queue", "Storage", "SEO", "Job", "Note", "Group"],
+// Layout: 3 columns
+const LAYOUT_COLUMNS: { label: string; types: BlockType[] }[] = [
+  { label: "BACKEND", types: ["DataModel", "Endpoint", "Auth", "Job"] },
+  { label: "FRONTEND", types: ["View", "UserFlow", "SEO", "Note"] },
+  {
+    label: "INFRASTRUCTURE",
+    types: ["Integration", "Security", "Cache", "Queue", "Storage", "Group"],
+  },
 ];
 
 let counter = 0;
@@ -92,28 +92,44 @@ export function CanvasToolbar() {
   }
 
   function handleAutoLayout() {
-    const PADDING_X = 280;
-    const PADDING_Y = 40;
-    let currentY = 60;
+    const COL_WIDTH = 320;
+    const ROW_GAP = 20;
+    const COL_GAP = 80;
+    const START_Y = 60;
 
-    for (const rowTypes of LAYOUT_ROWS) {
-      const rowNodes = nodes.filter((n) => rowTypes.includes(n.type));
-      if (rowNodes.length === 0) continue;
+    LAYOUT_COLUMNS.forEach((col, colIdx) => {
+      const colNodes = nodes.filter((n) => col.types.includes(n.type));
+      if (colNodes.length === 0) return;
 
-      let maxH = 0;
-      rowNodes.forEach((node, i) => {
-        updateNodePosition(node.id, { x: 60 + i * PADDING_X, y: currentY });
-        // Estimate height: DataModels are taller
-        const h =
-          node.type === "DataModel"
-            ? 60 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
-            : 80;
-        if (h > maxH) maxH = h;
+      const colX = 60 + colIdx * (COL_WIDTH + COL_GAP);
+      let currentY = START_Y;
+
+      // Sort: DataModels first, then by type order
+      colNodes.sort((a, b) => {
+        const ai = col.types.indexOf(a.type);
+        const bi = col.types.indexOf(b.type);
+        return ai - bi;
       });
 
-      currentY += maxH + PADDING_Y;
-    }
-    toast.success("Layout organized");
+      // Place nodes in this column
+      let prevType = "";
+      colNodes.forEach((node) => {
+        // Add extra gap between different block types
+        if (prevType && node.type !== prevType) {
+          currentY += 30;
+        }
+        updateNodePosition(node.id, { x: colX, y: currentY });
+
+        const h =
+          node.type === "DataModel"
+            ? 70 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
+            : 90;
+        currentY += h + ROW_GAP;
+        prevType = node.type;
+      });
+    });
+
+    toast.success("Organized: Backend → Frontend → Infrastructure");
   }
 
   return (

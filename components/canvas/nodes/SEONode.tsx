@@ -8,6 +8,7 @@ import type { SEOData } from "@/lib/blocks/schemas";
 export function SEONode({ id, data, selected }: NodeProps & { data: SEOData }) {
   return (
     <BaseNode
+      accentColor="#a855f7"
       id={id}
       selected={selected}
       icon={<Search className="h-3.5 w-3.5 text-teal-700" />}
