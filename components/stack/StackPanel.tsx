@@ -6,6 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogFooter,
@@ -27,18 +34,250 @@ type Props = {
   onClose: () => void;
 };
 
-const STACK_FIELDS: { key: keyof StackConfig; label: string; placeholder: string }[] = [
-  { key: "frontend", label: "Frontend", placeholder: "Next.js 15, React 19..." },
-  { key: "backend", label: "Backend", placeholder: "Next.js API Routes, Express..." },
-  { key: "database", label: "Database", placeholder: "PostgreSQL 16, MongoDB..." },
-  { key: "orm", label: "ORM / DB Client", placeholder: "Prisma, Drizzle, Mongoose..." },
-  { key: "auth", label: "Authentication", placeholder: "better-auth, NextAuth, Clerk..." },
-  { key: "hosting", label: "Hosting", placeholder: "Vercel, Railway, AWS..." },
-  { key: "styling", label: "Styling / UI", placeholder: "Tailwind CSS, shadcn/ui..." },
-  { key: "testing", label: "Testing", placeholder: "Vitest, Playwright, Jest..." },
-  { key: "cicd", label: "CI/CD", placeholder: "GitHub Actions, GitLab CI..." },
-  { key: "monitoring", label: "Monitoring", placeholder: "Sentry, Datadog, LogRocket..." },
+const OTHER = "__other__";
+
+type FieldDef = {
+  key: keyof StackConfig;
+  label: string;
+  options: string[];
+  placeholder: string;
+};
+
+const STACK_FIELDS: FieldDef[] = [
+  {
+    key: "frontend",
+    label: "Frontend",
+    placeholder: "Custom framework...",
+    options: [
+      "Next.js 15 (App Router)",
+      "Next.js 15 (Pages Router)",
+      "React + Vite",
+      "Vue 3 + Nuxt",
+      "Svelte + SvelteKit",
+      "Angular 18",
+      "Astro",
+      "Remix",
+      "React Native",
+      "Flutter",
+    ],
+  },
+  {
+    key: "backend",
+    label: "Backend",
+    placeholder: "Custom backend...",
+    options: [
+      "Next.js API Routes",
+      "Express.js",
+      "Fastify",
+      "NestJS",
+      "Hono",
+      "Django",
+      "FastAPI",
+      "Laravel",
+      "Ruby on Rails",
+      "Spring Boot",
+      "Go + Gin",
+      "Rust + Axum",
+      "Serverless (AWS Lambda)",
+      "Supabase Edge Functions",
+    ],
+  },
+  {
+    key: "database",
+    label: "Database",
+    placeholder: "Custom database...",
+    options: [
+      "PostgreSQL 16",
+      "MySQL 8",
+      "SQLite",
+      "MongoDB",
+      "Redis",
+      "Supabase (PostgreSQL)",
+      "PlanetScale (MySQL)",
+      "Neon (PostgreSQL)",
+      "Turso (SQLite)",
+      "DynamoDB",
+      "Firebase Firestore",
+    ],
+  },
+  {
+    key: "orm",
+    label: "ORM / DB Client",
+    placeholder: "Custom ORM...",
+    options: [
+      "Prisma",
+      "Drizzle",
+      "TypeORM",
+      "Sequelize",
+      "Mongoose",
+      "Kysely",
+      "Knex.js",
+      "SQLAlchemy",
+      "None (raw SQL)",
+    ],
+  },
+  {
+    key: "auth",
+    label: "Authentication",
+    placeholder: "Custom auth...",
+    options: [
+      "better-auth",
+      "NextAuth / Auth.js",
+      "Clerk",
+      "Supabase Auth",
+      "Firebase Auth",
+      "Lucia",
+      "Passport.js",
+      "Auth0",
+      "Kinde",
+      "Custom JWT",
+    ],
+  },
+  {
+    key: "hosting",
+    label: "Hosting / Deploy",
+    placeholder: "Custom hosting...",
+    options: [
+      "Vercel",
+      "Netlify",
+      "Railway",
+      "Render",
+      "Fly.io",
+      "AWS (EC2/ECS)",
+      "Google Cloud Run",
+      "Azure App Service",
+      "DigitalOcean App Platform",
+      "Docker self-hosted",
+      "Coolify",
+      "Hetzner + Docker",
+    ],
+  },
+  {
+    key: "styling",
+    label: "Styling / UI",
+    placeholder: "Custom styling...",
+    options: [
+      "Tailwind CSS + shadcn/ui",
+      "Tailwind CSS",
+      "CSS Modules",
+      "Styled Components",
+      "Chakra UI",
+      "Material UI (MUI)",
+      "Ant Design",
+      "Mantine",
+      "Radix UI + custom CSS",
+      "Bootstrap",
+    ],
+  },
+  {
+    key: "testing",
+    label: "Testing",
+    placeholder: "Custom testing...",
+    options: [
+      "Vitest + Playwright",
+      "Jest + React Testing Library",
+      "Vitest",
+      "Cypress",
+      "Playwright",
+      "Jest",
+      "pytest",
+      "None",
+    ],
+  },
+  {
+    key: "cicd",
+    label: "CI/CD",
+    placeholder: "Custom CI/CD...",
+    options: [
+      "GitHub Actions",
+      "GitLab CI",
+      "Vercel (auto deploy)",
+      "CircleCI",
+      "Jenkins",
+      "Bitbucket Pipelines",
+      "None",
+    ],
+  },
+  {
+    key: "monitoring",
+    label: "Monitoring / Observability",
+    placeholder: "Custom monitoring...",
+    options: [
+      "Sentry",
+      "Sentry + Vercel Analytics",
+      "Datadog",
+      "LogRocket",
+      "New Relic",
+      "Grafana + Prometheus",
+      "PostHog",
+      "Better Stack (Uptime)",
+      "None",
+    ],
+  },
 ];
+
+function StackSelect({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldDef;
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  const isCustom = value !== "" && !field.options.includes(value);
+  const [showCustom, setShowCustom] = useState(isCustom);
+
+  if (showCustom) {
+    return (
+      <div className="flex gap-1.5">
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder}
+          className="flex-1"
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="shrink-0 text-xs"
+          onClick={() => {
+            setShowCustom(false);
+            onChange("");
+          }}
+        >
+          List
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <Select
+      value={value || undefined}
+      onValueChange={(v) => {
+        if (v === OTHER) {
+          setShowCustom(true);
+          onChange("");
+        } else if (v) {
+          onChange(v);
+        }
+      }}
+    >
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder={`Select ${field.label.toLowerCase()}...`} />
+      </SelectTrigger>
+      <SelectContent>
+        {field.options.map((opt) => (
+          <SelectItem key={opt} value={opt}>
+            {opt}
+          </SelectItem>
+        ))}
+        <SelectItem value={OTHER}>Other (custom)...</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
 
 export function StackPanel({ projectId, open, onClose }: Props) {
   const [stack, setStack] = useState<StackConfig | null>(null);
@@ -96,13 +335,13 @@ export function StackPanel({ projectId, open, onClose }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
-            Tech Stack
+            <span className="text-lg">Tech Stack Configuration</span>
             <Button variant="outline" size="sm" onClick={handleSuggest} disabled={suggesting}>
               <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-              {suggesting ? "Thinking..." : "Suggest with AI"}
+              {suggesting ? "Analyzing project..." : "Suggest with AI"}
             </Button>
           </DialogTitle>
         </DialogHeader>
@@ -115,15 +354,15 @@ export function StackPanel({ projectId, open, onClose }: Props) {
         )}
 
         {stack && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-5">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
               {STACK_FIELDS.map((field) => (
                 <div key={field.key} className="space-y-1.5">
-                  <Label className="text-xs">{field.label}</Label>
-                  <Input
+                  <Label className="text-xs font-medium">{field.label}</Label>
+                  <StackSelect
+                    field={field}
                     value={String(stack[field.key] ?? "")}
-                    onChange={(e) => updateField(field.key, e.target.value)}
-                    placeholder={field.placeholder}
+                    onChange={(v) => updateField(field.key, v)}
                   />
                 </div>
               ))}
@@ -131,13 +370,13 @@ export function StackPanel({ projectId, open, onClose }: Props) {
 
             <Separator />
 
-            <div className="space-y-2">
-              <Label className="text-xs">Integrations & External Services</Label>
+            <div className="space-y-3">
+              <Label className="text-xs font-medium">Integrations & External Services</Label>
               <div className="flex flex-wrap gap-2">
                 {stack.integrations.map((int, i) => (
                   <span
                     key={i}
-                    className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs"
+                    className="inline-flex items-center gap-1.5 rounded-full border bg-muted px-3 py-1 text-xs"
                   >
                     {int}
                     <button onClick={() => removeIntegration(i)} className="hover:text-destructive">
@@ -145,27 +384,36 @@ export function StackPanel({ projectId, open, onClose }: Props) {
                     </button>
                   </span>
                 ))}
+                {stack.integrations.length === 0 && (
+                  <span className="text-xs text-muted-foreground">No integrations added</span>
+                )}
               </div>
               <div className="flex gap-2">
                 <Input
                   value={newIntegration}
                   onChange={(e) => setNewIntegration(e.target.value)}
-                  placeholder="Stripe, SendGrid, S3..."
+                  placeholder="Add integration: Stripe, SendGrid, S3, Twilio..."
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addIntegration())}
                 />
-                <Button variant="outline" size="sm" onClick={addIntegration}>
-                  <Plus className="h-3.5 w-3.5" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={addIntegration}
+                  disabled={!newIntegration.trim()}
+                >
+                  <Plus className="mr-1 h-3.5 w-3.5" />
+                  Add
                 </Button>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs">Notes</Label>
+              <Label className="text-xs font-medium">Additional Notes</Label>
               <textarea
                 value={stack.notes}
                 onChange={(e) => updateField("notes", e.target.value)}
-                placeholder="Any additional context about tech choices..."
-                rows={2}
+                placeholder="Justifications, constraints, preferences..."
+                rows={3}
                 className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
               />
             </div>
