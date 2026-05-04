@@ -220,7 +220,9 @@ export function Canvas({ onSave }: Props) {
   );
 
   const handleNodeClick = useCallback(
-    (_: React.MouseEvent, node: Node) => {
+    (e: React.MouseEvent, node: Node) => {
+      // Ctrl/Meta+click for multi-select: don't override React Flow's built-in selection
+      if (e.ctrlKey || e.metaKey || e.shiftKey) return;
       selectNode(node.id);
     },
     [selectNode],
@@ -305,10 +307,10 @@ export function Canvas({ onSave }: Props) {
         edgeTypes={edgeTypes}
         fitView
         selectionOnDrag
+        panOnDrag={[1]}
         selectionMode={SelectionMode.Partial}
-        multiSelectionKeyCode="Shift"
+        multiSelectionKeyCode="Control"
         deleteKeyCode={null}
-        selectNodesOnDrag={false}
       >
         <MiniMap />
         <Controls />
