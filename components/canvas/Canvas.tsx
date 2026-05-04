@@ -120,12 +120,7 @@ function CanvasInner({ onSave }: Props) {
         };
       }
 
-      if (n.type === "Group") {
-        const gd = n.data as { width?: number; height?: number };
-        base.style = { width: gd.width ?? 400, height: gd.height ?? 300 };
-        base.dragHandle = ".group-drag-handle";
-        base.zIndex = -1;
-      }
+      // No special handling for Group — sizing is done inside the component
       return base;
     });
   }
