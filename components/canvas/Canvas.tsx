@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ReactFlow,
+  ReactFlowProvider,
   MiniMap,
   Controls,
   Background,
@@ -65,6 +66,14 @@ type Props = {
 };
 
 export function Canvas({ onSave }: Props) {
+  return (
+    <ReactFlowProvider>
+      <CanvasInner onSave={onSave} />
+    </ReactFlowProvider>
+  );
+}
+
+function CanvasInner({ onSave }: Props) {
   const storeNodes = useCanvasStore((s) => s.nodes);
   const storeEdges = useCanvasStore((s) => s.edges);
   const isDirty = useCanvasStore((s) => s.isDirty);
