@@ -14,31 +14,6 @@
   "canvas": {
     "nodes": [
       {
-        "id": "grp-data",
-        "type": "Group",
-        "position": { "x": 50, "y": 50 },
-        "data": {
-          "blockType": "Group",
-          "name": "Data & API Layer",
-          "color": "#3b82f6",
-          "width": 500,
-          "height": 540
-        }
-      },
-      {
-        "id": "grp-infra",
-        "type": "Group",
-        "position": { "x": 700, "y": 50 },
-        "data": {
-          "blockType": "Group",
-          "name": "Infrastructure",
-          "color": "#f59e0b",
-          "width": 300,
-          "height": 420
-        }
-      },
-
-      {
         "id": "user-model",
         "type": "DataModel",
         "position": { "x": 70, "y": 90 },
@@ -123,7 +98,6 @@
           "description": "Audit trail with filters by user, action, date"
         }
       },
-
       {
         "id": "dashboard-view",
         "type": "View",
@@ -160,7 +134,6 @@
           "description": "Searchable audit trail with export"
         }
       },
-
       {
         "id": "security-block",
         "type": "Security",

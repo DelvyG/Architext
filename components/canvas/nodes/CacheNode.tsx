@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { CacheData } from "@/lib/blocks/schemas";
 
-export function CacheNode({ id, data }: NodeProps & { data: CacheData }) {
+export function CacheNode({ id, data, selected }: NodeProps & { data: CacheData }) {
   return (
     <BaseNode
       id={id}

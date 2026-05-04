@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { IntegrationData } from "@/lib/blocks/schemas";
 
-export function IntegrationNode({ id, data }: NodeProps & { data: IntegrationData }) {
+export function IntegrationNode({ id, data, selected }: NodeProps & { data: IntegrationData }) {
   return (
     <BaseNode
       id={id}

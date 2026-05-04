@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { NoteData } from "@/lib/blocks/schemas";
 
-export function NoteNode({ id, data }: NodeProps & { data: NoteData }) {
+export function NoteNode({ id, data, selected }: NodeProps & { data: NoteData }) {
   return (
     <BaseNode
       id={id}

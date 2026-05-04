@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { EndpointData } from "@/lib/blocks/schemas";
 
-export function EndpointNode({ id, data }: NodeProps & { data: EndpointData }) {
+export function EndpointNode({ id, data, selected }: NodeProps & { data: EndpointData }) {
   return (
     <BaseNode
       id={id}

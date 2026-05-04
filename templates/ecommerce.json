@@ -15,55 +15,6 @@
   "canvas": {
     "nodes": [
       {
-        "id": "grp-data",
-        "type": "Group",
-        "position": { "x": 50, "y": 50 },
-        "data": {
-          "blockType": "Group",
-          "name": "Data Layer",
-          "color": "#3b82f6",
-          "width": 500,
-          "height": 420
-        }
-      },
-      {
-        "id": "grp-api",
-        "type": "Group",
-        "position": { "x": 50, "y": 500 },
-        "data": {
-          "blockType": "Group",
-          "name": "API Layer",
-          "color": "#22c55e",
-          "width": 500,
-          "height": 300
-        }
-      },
-      {
-        "id": "grp-frontend",
-        "type": "Group",
-        "position": { "x": 50, "y": 820 },
-        "data": {
-          "blockType": "Group",
-          "name": "Frontend",
-          "color": "#a855f7",
-          "width": 500,
-          "height": 300
-        }
-      },
-      {
-        "id": "grp-infra",
-        "type": "Group",
-        "position": { "x": 700, "y": 50 },
-        "data": {
-          "blockType": "Group",
-          "name": "Infrastructure",
-          "color": "#f59e0b",
-          "width": 300,
-          "height": 900
-        }
-      },
-
-      {
         "id": "product-model",
         "type": "DataModel",
         "position": { "x": 70, "y": 90 },
@@ -139,7 +90,6 @@
           "protects": []
         }
       },
-
       {
         "id": "api-products",
         "type": "Endpoint",
@@ -179,7 +129,6 @@
           "description": "List user orders with status tracking"
         }
       },
-
       {
         "id": "storefront-view",
         "type": "View",
@@ -228,7 +177,6 @@
           "description": "Product management, order tracking, analytics"
         }
       },
-
       {
         "id": "stripe-int",
         "type": "Integration",

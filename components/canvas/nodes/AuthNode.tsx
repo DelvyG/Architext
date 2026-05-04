@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { AuthData } from "@/lib/blocks/schemas";
 
-export function AuthNode({ id, data }: NodeProps & { data: AuthData }) {
+export function AuthNode({ id, data, selected }: NodeProps & { data: AuthData }) {
   return (
     <BaseNode
       id={id}

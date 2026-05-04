@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { JobData } from "@/lib/blocks/schemas";
 
-export function JobNode({ id, data }: NodeProps & { data: JobData }) {
+export function JobNode({ id, data, selected }: NodeProps & { data: JobData }) {
   return (
     <BaseNode
       id={id}

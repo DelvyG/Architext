@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { SecurityData } from "@/lib/blocks/schemas";
 
-export function SecurityNode({ id, data }: NodeProps & { data: SecurityData }) {
+export function SecurityNode({ id, data, selected }: NodeProps & { data: SecurityData }) {
   return (
     <BaseNode
       id={id}

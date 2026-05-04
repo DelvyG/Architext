@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { SEOData } from "@/lib/blocks/schemas";
 
-export function SEONode({ id, data }: NodeProps & { data: SEOData }) {
+export function SEONode({ id, data, selected }: NodeProps & { data: SEOData }) {
   return (
     <BaseNode
       id={id}

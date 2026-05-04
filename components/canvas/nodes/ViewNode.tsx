@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { ViewData } from "@/lib/blocks/schemas";
 
-export function ViewNode({ id, data }: NodeProps & { data: ViewData }) {
+export function ViewNode({ id, data, selected }: NodeProps & { data: ViewData }) {
   return (
     <BaseNode
       id={id}

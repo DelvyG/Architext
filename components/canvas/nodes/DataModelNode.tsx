@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { DataModelData } from "@/lib/blocks/schemas";
 
-export function DataModelNode({ id, data }: NodeProps & { data: DataModelData }) {
+export function DataModelNode({ id, data, selected }: NodeProps & { data: DataModelData }) {
   return (
     <BaseNode
       id={id}

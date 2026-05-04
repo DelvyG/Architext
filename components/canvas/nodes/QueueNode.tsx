@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { QueueData } from "@/lib/blocks/schemas";
 
-export function QueueNode({ id, data }: NodeProps & { data: QueueData }) {
+export function QueueNode({ id, data, selected }: NodeProps & { data: QueueData }) {
   return (
     <BaseNode
       id={id}

@@ -5,7 +5,7 @@ import type { NodeProps } from "@xyflow/react";
 import { BaseNode } from "./BaseNode";
 import type { UserFlowData } from "@/lib/blocks/schemas";
 
-export function UserFlowNode({ id, data }: NodeProps & { data: UserFlowData }) {
+export function UserFlowNode({ id, data, selected }: NodeProps & { data: UserFlowData }) {
   return (
     <BaseNode
       id={id}
