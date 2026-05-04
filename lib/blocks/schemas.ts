@@ -1,14 +1,18 @@
 import { z } from "zod/v4";
 
+// Helper: accept null as undefined for optional fields (AI often returns null)
+const optStr = z.string().nullable().optional();
+const optBool = z.boolean().nullable().optional();
+
 // ─── Field schemas ──────────────────────────────────────────────
 
 const FieldSchema = z.object({
   name: z.string().min(1),
   type: z.string().min(1),
   required: z.boolean(),
-  unique: z.boolean().optional(),
+  unique: optBool,
   default: z.coerce.string().optional(),
-  description: z.string().optional(),
+  description: optStr,
 });
 
 const RelationSchema = z.object({
@@ -21,7 +25,7 @@ const RelationSchema = z.object({
 export const DataModelDataSchema = z.object({
   blockType: z.literal("DataModel"),
   name: z.string().min(1),
-  description: z.string().optional(),
+  description: optStr,
   fields: z.array(FieldSchema),
   relations: z.array(RelationSchema),
 });
@@ -30,21 +34,21 @@ export const EndpointDataSchema = z.object({
   blockType: z.literal("Endpoint"),
   method: z.enum(["GET", "POST", "PUT", "PATCH", "DELETE"]),
   path: z.string().min(1),
-  description: z.string().optional(),
+  description: optStr,
   auth: z.enum(["none", "required", "role-based"]),
-  requestSchema: z.string().optional(),
-  responseSchema: z.string().optional(),
+  requestSchema: optStr,
+  responseSchema: optStr,
   consumedByViews: z.array(z.string()),
 });
 
 export const ViewDataSchema = z.object({
   blockType: z.literal("View"),
   name: z.string().min(1),
-  route: z.string().optional(),
-  description: z.string().optional(),
+  route: optStr,
+  description: optStr,
   consumesEndpoints: z.array(z.string()),
-  requiredAuth: z.string().optional(),
-  notes: z.string().optional(),
+  requiredAuth: optStr,
+  notes: optStr,
 });
 
 export const IntegrationDataSchema = z.object({
@@ -58,7 +62,7 @@ export const IntegrationDataSchema = z.object({
 export const UserFlowStepSchema = z.object({
   actor: z.string().min(1),
   action: z.string().min(1),
-  target: z.string().optional(),
+  target: optStr,
 });
 
 export const UserFlowDataSchema = z.object({
@@ -78,7 +82,7 @@ export const JobDataSchema = z.object({
   blockType: z.literal("Job"),
   name: z.string().min(1),
   trigger: z.enum(["cron", "webhook", "event"]),
-  frequency: z.string().optional(),
+  frequency: optStr,
   action: z.string(),
 });
 
@@ -91,15 +95,15 @@ export const SecurityDataSchema = z.object({
   blockType: z.literal("Security"),
   name: z.string().min(1),
   policies: z.array(z.string()),
-  description: z.string().optional(),
+  description: optStr,
 });
 
 export const CacheDataSchema = z.object({
   blockType: z.literal("Cache"),
   name: z.string().min(1),
   strategy: z.enum(["redis", "in-memory", "cdn", "browser", "custom"]),
-  ttl: z.string().optional(),
-  description: z.string().optional(),
+  ttl: optStr,
+  description: optStr,
 });
 
 export const QueueDataSchema = z.object({
@@ -107,7 +111,7 @@ export const QueueDataSchema = z.object({
   name: z.string().min(1),
   broker: z.string(),
   events: z.array(z.string()),
-  description: z.string().optional(),
+  description: optStr,
 });
 
 export const StorageDataSchema = z.object({
@@ -115,22 +119,22 @@ export const StorageDataSchema = z.object({
   name: z.string().min(1),
   provider: z.string(),
   fileTypes: z.array(z.string()),
-  maxSize: z.string().optional(),
-  description: z.string().optional(),
+  maxSize: optStr,
+  description: optStr,
 });
 
 export const SEODataSchema = z.object({
   blockType: z.literal("SEO"),
   name: z.string().min(1),
   strategies: z.array(z.string()),
-  description: z.string().optional(),
+  description: optStr,
 });
 
 export const GroupDataSchema = z.object({
   blockType: z.literal("Group"),
   name: z.string().min(1),
-  color: z.string().optional(),
-  description: z.string().optional(),
+  color: optStr,
+  description: optStr,
 });
 
 // ─── Discriminated union ────────────────────────────────────────
@@ -182,7 +186,7 @@ export const CanvasNodeSchema = z.object({
   type: z.enum(BLOCK_TYPES),
   position: z.object({ x: z.number(), y: z.number() }),
   data: BlockDataSchema,
-  parentId: z.string().optional(),
+  parentId: optStr,
 });
 
 export const CanvasEdgeSchema = z.object({
@@ -190,7 +194,7 @@ export const CanvasEdgeSchema = z.object({
   source: z.string(),
   target: z.string(),
   type: z.enum(CONNECTION_TYPES),
-  label: z.string().optional(),
+  label: optStr,
 });
 
 export const CanvasSchema = z.object({

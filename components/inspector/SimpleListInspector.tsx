@@ -9,7 +9,7 @@ import { Plus, X } from "lucide-react";
 type Props = {
   nodeId: string;
   name: string;
-  description?: string;
+  description?: string | null;
   listLabel: string;
   items: string[];
   onNameChange: (name: string) => void;
