@@ -14,18 +14,6 @@
   "canvas": {
     "nodes": [
       {
-        "id": "grp-data",
-        "type": "Group",
-        "position": { "x": 50, "y": 50 },
-        "data": { "blockType": "Group", "name": "Data Layer", "color": "#dbeafe" }
-      },
-      {
-        "id": "grp-infra",
-        "type": "Group",
-        "position": { "x": 650, "y": 50 },
-        "data": { "blockType": "Group", "name": "Infrastructure & Security", "color": "#fee2e2" }
-      },
-      {
         "id": "user-model",
         "type": "DataModel",
         "position": { "x": 100, "y": 130 },

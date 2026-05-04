@@ -15,30 +15,6 @@
   "canvas": {
     "nodes": [
       {
-        "id": "grp-data",
-        "type": "Group",
-        "position": { "x": 50, "y": 50 },
-        "data": { "blockType": "Group", "name": "Data Layer", "color": "#dbeafe" }
-      },
-      {
-        "id": "grp-api",
-        "type": "Group",
-        "position": { "x": 50, "y": 500 },
-        "data": { "blockType": "Group", "name": "API Layer", "color": "#dcfce7" }
-      },
-      {
-        "id": "grp-frontend",
-        "type": "Group",
-        "position": { "x": 50, "y": 850 },
-        "data": { "blockType": "Group", "name": "Frontend", "color": "#f3e8ff" }
-      },
-      {
-        "id": "grp-infra",
-        "type": "Group",
-        "position": { "x": 750, "y": 50 },
-        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#fef3c7" }
-      },
-      {
         "id": "product-model",
         "type": "DataModel",
         "position": { "x": 100, "y": 130 },
