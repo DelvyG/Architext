@@ -219,11 +219,19 @@ export function Canvas({ onSave }: Props) {
     [storeNodes, storeAddEdge],
   );
 
-  const handleNodeClick = useCallback(
-    (e: React.MouseEvent, node: Node) => {
-      // Ctrl/Meta+click for multi-select: don't override React Flow's built-in selection
-      if (e.ctrlKey || e.metaKey || e.shiftKey) return;
-      selectNode(node.id);
+  const handleSelectionChange = useCallback(
+    ({ nodes: selectedNodes }: { nodes: Node[] }) => {
+      // Sync React Flow selection → Zustand store (for inspector)
+      if (selectedNodes.length === 1 && selectedNodes[0]) {
+        selectNode(selectedNodes[0].id);
+      } else if (selectedNodes.length === 0) {
+        selectNode(null);
+      }
+      // When multiple selected, keep the last one in inspector
+      if (selectedNodes.length > 1) {
+        const last = selectedNodes[selectedNodes.length - 1];
+        if (last) selectNode(last.id);
+      }
     },
     [selectNode],
   );
@@ -299,7 +307,7 @@ export function Canvas({ onSave }: Props) {
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         onConnect={handleConnect}
-        onNodeClick={handleNodeClick}
+        onSelectionChange={handleSelectionChange}
         onPaneClick={handlePaneClick}
         onNodeContextMenu={handleNodeContextMenu}
         onPaneContextMenu={handlePaneContextMenu}
@@ -309,7 +317,7 @@ export function Canvas({ onSave }: Props) {
         selectionOnDrag
         panOnDrag={[1]}
         selectionMode={SelectionMode.Partial}
-        multiSelectionKeyCode="Control"
+        multiSelectionKeyCode="Shift"
         deleteKeyCode={null}
       >
         <MiniMap />
