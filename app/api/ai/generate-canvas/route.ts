@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod/v4";
-import { generateObject } from "ai";
+import { generateText } from "ai";
 import { prisma } from "@/lib/db/client";
 import { requireSession } from "@/lib/auth/session";
 import { getAIClient, NoActiveApiKeyError } from "@/lib/ai/client";
@@ -12,6 +12,14 @@ const BodySchema = z.object({
   projectId: z.string().min(1),
   prompt: z.string().min(1),
 });
+
+function extractJson(text: string): string {
+  const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (match?.[1]) return match[1].trim();
+  const braceMatch = text.match(/\{[\s\S]*\}/);
+  if (braceMatch?.[0]) return braceMatch[0];
+  return text;
+}
 
 export async function POST(req: Request) {
   try {
@@ -36,65 +44,82 @@ export async function POST(req: Request) {
     }
 
     const { client, model } = await getAIClient(session.user.id);
-    const messages = buildGenerateCanvasPrompt({
+    const { system, messages } = buildGenerateCanvasPrompt({
       userPrompt: body.prompt,
       language: project.language,
       templateName: project.templateSlug ?? undefined,
     });
 
-    let result;
+    const jsonInstructions = `\n\nIMPORTANT: Respond ONLY with a JSON object wrapped in a \`\`\`json code fence. Structure:
+{
+  "stack": { "frontend": "...", "backend": "...", "db": "...", "hosting": "...", "integrations": ["..."] },
+  "nodes": [
+    { "id": "short-id", "type": "DataModel", "position": {"x": 100, "y": 100}, "data": { "blockType": "DataModel", ...fields } }
+  ],
+  "edges": [
+    { "id": "e1", "source": "node-id", "target": "node-id", "type": "uses" }
+  ],
+  "reasoning": "Why I chose this architecture..."
+}
+
+Block data by blockType:
+- DataModel: { blockType, name, description?, fields: [{name, type, required, unique?, default?}], relations: [{target, type: "one-to-one"|"one-to-many"|"many-to-many"}] }
+- Endpoint: { blockType, method: GET|POST|PUT|PATCH|DELETE, path, description?, auth: none|required|role-based, consumedByViews: [] }
+- View: { blockType, name, route?, description?, consumesEndpoints: [] }
+- Integration: { blockType, service, purpose, usedIn: [], secretsNeeded: [] }
+- UserFlow: { blockType, name, steps: [{actor, action, target?}] }
+- Auth: { blockType, method: email-password|oauth|magic-link|api-key, roles: [], protects: [] }
+- Job: { blockType, name, trigger: cron|webhook|event, frequency?, action }
+- Note: { blockType, content }`;
+
+    const { text } = await generateText({
+      model: client(model),
+      system: system + jsonInstructions,
+      messages,
+    });
+
+    const jsonStr = extractJson(text);
+    let parsed;
     try {
-      result = await generateObject({
+      parsed = GenerateCanvasResponseSchema.parse(JSON.parse(jsonStr));
+    } catch (parseError) {
+      console.error("First parse failed, retrying...", parseError);
+      const { text: retryText } = await generateText({
         model: client(model),
-        messages,
-        schema: GenerateCanvasResponseSchema,
-      });
-    } catch (firstError) {
-      // Retry once with error context
-      try {
-        const errorContext =
-          firstError instanceof Error ? firstError.message : "Unknown validation error";
-        const retryMessages = [
+        system: system + jsonInstructions,
+        messages: [
           ...messages,
+          { role: "assistant" as const, content: text },
           {
             role: "user" as const,
-            content: `The previous response failed validation: ${errorContext}. Please fix and try again.`,
+            content: `Your JSON was invalid. Fix it and return ONLY valid JSON.`,
           },
-        ];
-        result = await generateObject({
-          model: client(model),
-          messages: retryMessages,
-          schema: GenerateCanvasResponseSchema,
-        });
+        ],
+      });
+      const retryJson = extractJson(retryText);
+      try {
+        parsed = GenerateCanvasResponseSchema.parse(JSON.parse(retryJson));
       } catch {
         return NextResponse.json({ error: "AI generation failed after retry" }, { status: 422 });
       }
     }
 
-    const canvas = { nodes: result.object.nodes, edges: result.object.edges };
+    const canvas = { nodes: parsed.nodes, edges: parsed.edges };
 
     await prisma.$transaction([
       prisma.project.update({
         where: { id: project.id },
         data: {
           canvas,
-          stack: result.object.stack,
+          stack: parsed.stack,
           initialPrompt: body.prompt,
         },
       }),
       prisma.chatMessage.create({
-        data: {
-          projectId: project.id,
-          role: "user",
-          content: body.prompt,
-        },
+        data: { projectId: project.id, role: "user", content: body.prompt },
       }),
       prisma.chatMessage.create({
-        data: {
-          projectId: project.id,
-          role: "assistant",
-          content: result.object.reasoning,
-        },
+        data: { projectId: project.id, role: "assistant", content: parsed.reasoning },
       }),
     ]);
 

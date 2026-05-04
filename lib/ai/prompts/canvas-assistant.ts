@@ -83,21 +83,23 @@ type Params = {
   history?: ModelMessage[];
 };
 
+type AssistantPrompt = {
+  system: string;
+  messages: ModelMessage[];
+};
+
 export function buildAssistantPrompt({
   canvas,
   userMessage,
   language,
   history,
-}: Params): ModelMessage[] {
+}: Params): AssistantPrompt {
   const system = buildSystemPrompt(language);
   const canvasContext = serializeCanvasCompact(canvas);
 
-  const messages: ModelMessage[] = [
-    {
-      role: "system",
-      content: `${system}\n\n## Current Canvas State:\n${canvasContext || "(empty canvas)"}`,
-    },
-  ];
+  const systemWithCanvas = `${system}\n\n## Current Canvas State:\n${canvasContext || "(empty canvas)"}`;
+
+  const messages: ModelMessage[] = [];
 
   if (history) {
     messages.push(...history);
@@ -105,5 +107,5 @@ export function buildAssistantPrompt({
 
   messages.push({ role: "user", content: userMessage });
 
-  return messages;
+  return { system: systemWithCanvas, messages };
 }

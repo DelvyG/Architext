@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       }));
 
     const { client, model } = await getAIClient(session.user.id);
-    const messages = buildAssistantPrompt({
+    const { system, messages } = buildAssistantPrompt({
       canvas: project.canvas as Canvas,
       userMessage: body.message,
       language: project.language,
@@ -68,6 +68,7 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: client(model),
+      system,
       messages,
       async onFinish({ text }) {
         await prisma.chatMessage.create({
