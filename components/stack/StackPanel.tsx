@@ -340,7 +340,7 @@ export function StackPanel({ projectId, open, onClose }: Props) {
         style={{ width: "90vw", maxWidth: 900 }}
       >
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
+          <DialogTitle className="flex items-center gap-4 pr-8">
             <span className="text-lg">Tech Stack Configuration</span>
             <Button variant="outline" size="sm" onClick={handleSuggest} disabled={suggesting}>
               <Sparkles className="mr-1.5 h-3.5 w-3.5" />
