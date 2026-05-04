@@ -15,9 +15,35 @@
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#3b82f6" }
+      },
+      {
+        "id": "grp-api",
+        "type": "Group",
+        "position": { "x": 50, "y": 420 },
+        "data": { "blockType": "Group", "name": "API Layer", "color": "#22c55e" }
+      },
+      {
+        "id": "grp-frontend",
+        "type": "Group",
+        "position": { "x": 50, "y": 750 },
+        "data": { "blockType": "Group", "name": "Frontend", "color": "#a855f7" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 700, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#f59e0b" }
+      },
+
+      {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -34,7 +60,8 @@
       {
         "id": "prompt-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 130 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "Prompt",
@@ -51,7 +78,8 @@
       {
         "id": "generation-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 310 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "Generation",
@@ -72,7 +100,8 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 400, "y": 310 },
+        "position": { "x": 250, "y": 160 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -80,10 +109,12 @@
           "protects": []
         }
       },
+
       {
         "id": "api-generate",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 530 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -96,7 +127,8 @@
       {
         "id": "api-prompts",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 530 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -109,7 +141,8 @@
       {
         "id": "api-history",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 670 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -122,7 +155,8 @@
       {
         "id": "api-billing",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 670 },
+        "position": { "x": 250, "y": 160 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -132,10 +166,12 @@
           "description": "Buy credits via Stripe"
         }
       },
+
       {
         "id": "playground-view",
         "type": "View",
-        "position": { "x": 100, "y": 880 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-frontend",
         "data": {
           "blockType": "View",
           "name": "Playground",
@@ -147,7 +183,8 @@
       {
         "id": "history-view",
         "type": "View",
-        "position": { "x": 400, "y": 880 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-frontend",
         "data": {
           "blockType": "View",
           "name": "History",
@@ -159,7 +196,8 @@
       {
         "id": "prompts-view",
         "type": "View",
-        "position": { "x": 100, "y": 1010 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-frontend",
         "data": {
           "blockType": "View",
           "name": "Prompt Library",
@@ -168,10 +206,12 @@
           "description": "Browse, create, share prompt templates"
         }
       },
+
       {
         "id": "openai-int",
         "type": "Integration",
-        "position": { "x": 800, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Integration",
           "service": "OpenAI",
@@ -183,7 +223,8 @@
       {
         "id": "anthropic-int",
         "type": "Integration",
-        "position": { "x": 800, "y": 270 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Integration",
           "service": "Anthropic",
@@ -195,7 +236,8 @@
       {
         "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 800, "y": 410 },
+        "position": { "x": 20, "y": 280 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
@@ -207,7 +249,8 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 800, "y": 550 },
+        "position": { "x": 20, "y": 400 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Cache",
           "name": "Response Cache",
@@ -219,7 +262,8 @@
       {
         "id": "queue-block",
         "type": "Queue",
-        "position": { "x": 800, "y": 690 },
+        "position": { "x": 20, "y": 520 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Queue",
           "name": "Generation Queue",
@@ -231,7 +275,8 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 800, "y": 830 },
+        "position": { "x": 20, "y": 640 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Security",
           "name": "AI Security",
@@ -247,7 +292,8 @@
       {
         "id": "seo-block",
         "type": "SEO",
-        "position": { "x": 800, "y": 980 },
+        "position": { "x": 20, "y": 760 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "SEO",
           "name": "Marketing SEO",

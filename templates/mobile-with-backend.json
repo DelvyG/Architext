@@ -15,9 +15,29 @@
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#3b82f6" }
+      },
+      {
+        "id": "grp-api",
+        "type": "Group",
+        "position": { "x": 50, "y": 420 },
+        "data": { "blockType": "Group", "name": "API Layer", "color": "#22c55e" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 650, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#f59e0b" }
+      },
+
+      {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -34,7 +54,8 @@
       {
         "id": "post-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 130 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "Post",
@@ -50,7 +71,8 @@
       {
         "id": "notification-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 300 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "Notification",
@@ -67,7 +89,8 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 400, "y": 300 },
+        "position": { "x": 250, "y": 160 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -75,10 +98,12 @@
           "protects": []
         }
       },
+
       {
         "id": "api-auth",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 480 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -91,7 +116,8 @@
       {
         "id": "api-posts",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 480 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -104,7 +130,8 @@
       {
         "id": "api-upload",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 620 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -117,7 +144,8 @@
       {
         "id": "api-notifications",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 620 },
+        "position": { "x": 250, "y": 160 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -127,10 +155,12 @@
           "description": "List user notifications"
         }
       },
+
       {
         "id": "fcm-int",
         "type": "Integration",
-        "position": { "x": 750, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Integration",
           "service": "Firebase Cloud Messaging",
@@ -142,7 +172,8 @@
       {
         "id": "storage-block",
         "type": "Storage",
-        "position": { "x": 750, "y": 280 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Storage",
           "name": "Media Storage",
@@ -154,7 +185,8 @@
       {
         "id": "queue-block",
         "type": "Queue",
-        "position": { "x": 750, "y": 430 },
+        "position": { "x": 20, "y": 280 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Queue",
           "name": "Notification Queue",
@@ -166,7 +198,8 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 750, "y": 580 },
+        "position": { "x": 20, "y": 400 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Cache",
           "name": "Feed Cache",
@@ -178,7 +211,8 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 750, "y": 720 },
+        "position": { "x": 20, "y": 520 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Security",
           "name": "API Security",
@@ -194,7 +228,8 @@
       {
         "id": "notify-job",
         "type": "Job",
-        "position": { "x": 400, "y": 760 },
+        "position": { "x": 20, "y": 640 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Job",
           "name": "ProcessNotifications",

@@ -14,9 +14,23 @@
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data & API Layer", "color": "#3b82f6" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 700, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#f59e0b" }
+      },
+
+      {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -34,7 +48,8 @@
       {
         "id": "audit-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 130 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "AuditLog",
@@ -51,7 +66,8 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 100, "y": 320 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -62,7 +78,8 @@
       {
         "id": "api-users",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 460 },
+        "position": { "x": 20, "y": 280 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -75,7 +92,8 @@
       {
         "id": "api-metrics",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 460 },
+        "position": { "x": 250, "y": 280 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -88,7 +106,8 @@
       {
         "id": "api-audit",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 600 },
+        "position": { "x": 250, "y": 400 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -98,10 +117,11 @@
           "description": "Audit trail with filters by user, action, date"
         }
       },
+
       {
         "id": "dashboard-view",
         "type": "View",
-        "position": { "x": 100, "y": 750 },
+        "position": { "x": 100, "y": 700 },
         "data": {
           "blockType": "View",
           "name": "Dashboard",
@@ -113,7 +133,7 @@
       {
         "id": "users-view",
         "type": "View",
-        "position": { "x": 400, "y": 750 },
+        "position": { "x": 400, "y": 700 },
         "data": {
           "blockType": "View",
           "name": "User Management",
@@ -125,7 +145,7 @@
       {
         "id": "audit-view",
         "type": "View",
-        "position": { "x": 400, "y": 890 },
+        "position": { "x": 400, "y": 840 },
         "data": {
           "blockType": "View",
           "name": "Audit Log",
@@ -134,10 +154,12 @@
           "description": "Searchable audit trail with export"
         }
       },
+
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 700, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Security",
           "name": "Admin Security",
@@ -153,7 +175,8 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 700, "y": 310 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Cache",
           "name": "Metrics Cache",
@@ -165,7 +188,8 @@
       {
         "id": "cleanup-job",
         "type": "Job",
-        "position": { "x": 700, "y": 460 },
+        "position": { "x": 20, "y": 280 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Job",
           "name": "AuditLogCleanup",

@@ -15,9 +15,35 @@
   "canvas": {
     "nodes": [
       {
+        "id": "grp-data",
+        "type": "Group",
+        "position": { "x": 50, "y": 50 },
+        "data": { "blockType": "Group", "name": "Data Layer", "color": "#3b82f6" }
+      },
+      {
+        "id": "grp-api",
+        "type": "Group",
+        "position": { "x": 50, "y": 500 },
+        "data": { "blockType": "Group", "name": "API Layer", "color": "#22c55e" }
+      },
+      {
+        "id": "grp-frontend",
+        "type": "Group",
+        "position": { "x": 50, "y": 820 },
+        "data": { "blockType": "Group", "name": "Frontend", "color": "#a855f7" }
+      },
+      {
+        "id": "grp-infra",
+        "type": "Group",
+        "position": { "x": 700, "y": 50 },
+        "data": { "blockType": "Group", "name": "Infrastructure", "color": "#f59e0b" }
+      },
+
+      {
         "id": "product-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "Product",
@@ -36,7 +62,8 @@
       {
         "id": "category-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 130 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "Category",
@@ -51,7 +78,8 @@
       {
         "id": "order-model",
         "type": "DataModel",
-        "position": { "x": 100, "y": 310 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "Order",
@@ -67,7 +95,8 @@
       {
         "id": "user-model",
         "type": "DataModel",
-        "position": { "x": 400, "y": 310 },
+        "position": { "x": 250, "y": 160 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "DataModel",
           "name": "User",
@@ -82,7 +111,8 @@
       {
         "id": "auth-block",
         "type": "Auth",
-        "position": { "x": 400, "y": 480 },
+        "position": { "x": 20, "y": 280 },
+        "parentId": "grp-data",
         "data": {
           "blockType": "Auth",
           "method": "email-password",
@@ -90,10 +120,12 @@
           "protects": []
         }
       },
+
       {
         "id": "api-products",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 580 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -106,7 +138,8 @@
       {
         "id": "api-checkout",
         "type": "Endpoint",
-        "position": { "x": 400, "y": 580 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "POST",
@@ -119,7 +152,8 @@
       {
         "id": "api-orders",
         "type": "Endpoint",
-        "position": { "x": 100, "y": 720 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-api",
         "data": {
           "blockType": "Endpoint",
           "method": "GET",
@@ -129,10 +163,12 @@
           "description": "List user orders with status tracking"
         }
       },
+
       {
         "id": "storefront-view",
         "type": "View",
-        "position": { "x": 100, "y": 930 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-frontend",
         "data": {
           "blockType": "View",
           "name": "Storefront",
@@ -144,7 +180,8 @@
       {
         "id": "product-view",
         "type": "View",
-        "position": { "x": 400, "y": 930 },
+        "position": { "x": 250, "y": 40 },
+        "parentId": "grp-frontend",
         "data": {
           "blockType": "View",
           "name": "Product Detail",
@@ -156,7 +193,8 @@
       {
         "id": "cart-view",
         "type": "View",
-        "position": { "x": 100, "y": 1060 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-frontend",
         "data": {
           "blockType": "View",
           "name": "Cart & Checkout",
@@ -168,7 +206,8 @@
       {
         "id": "admin-view",
         "type": "View",
-        "position": { "x": 400, "y": 1060 },
+        "position": { "x": 250, "y": 160 },
+        "parentId": "grp-frontend",
         "data": {
           "blockType": "View",
           "name": "Admin Panel",
@@ -177,10 +216,12 @@
           "description": "Product management, order tracking, analytics"
         }
       },
+
       {
         "id": "stripe-int",
         "type": "Integration",
-        "position": { "x": 800, "y": 130 },
+        "position": { "x": 20, "y": 40 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Integration",
           "service": "Stripe",
@@ -192,7 +233,8 @@
       {
         "id": "email-int",
         "type": "Integration",
-        "position": { "x": 800, "y": 280 },
+        "position": { "x": 20, "y": 160 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Integration",
           "service": "SendGrid",
@@ -204,7 +246,8 @@
       {
         "id": "storage-block",
         "type": "Storage",
-        "position": { "x": 800, "y": 420 },
+        "position": { "x": 20, "y": 280 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Storage",
           "name": "Product Images",
@@ -216,7 +259,8 @@
       {
         "id": "cache-block",
         "type": "Cache",
-        "position": { "x": 800, "y": 560 },
+        "position": { "x": 20, "y": 400 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Cache",
           "name": "Product Cache",
@@ -228,7 +272,8 @@
       {
         "id": "security-block",
         "type": "Security",
-        "position": { "x": 800, "y": 700 },
+        "position": { "x": 20, "y": 520 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Security",
           "name": "Store Security",
@@ -243,7 +288,8 @@
       {
         "id": "seo-block",
         "type": "SEO",
-        "position": { "x": 800, "y": 840 },
+        "position": { "x": 20, "y": 640 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "SEO",
           "name": "Store SEO",
@@ -259,7 +305,8 @@
       {
         "id": "order-job",
         "type": "Job",
-        "position": { "x": 800, "y": 980 },
+        "position": { "x": 20, "y": 760 },
+        "parentId": "grp-infra",
         "data": {
           "blockType": "Job",
           "name": "OrderStatusSync",
