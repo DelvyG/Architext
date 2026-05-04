@@ -1,0 +1,18 @@
+{
+  "name": "architext-cli",
+  "version": "0.1.0",
+  "description": "CLI to pull architecture exports from Architext",
+  "type": "module",
+  "bin": {
+    "architext-cli": "./architext.mjs"
+  },
+  "files": [
+    "architext.mjs"
+  ],
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DelvyG/Architext.git",
+    "directory": "cli"
+  }
+}

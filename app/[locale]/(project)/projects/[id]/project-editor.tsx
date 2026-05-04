@@ -20,7 +20,8 @@ import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
 import { saveCanvas } from "./actions";
 import { createSnapshot, getSnapshots, restoreSnapshot } from "./snapshot-actions";
-import { Camera, History, Key } from "lucide-react";
+import { generateShareToken, revokeShareToken } from "./share-actions";
+import { Camera, History, Key, Share2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
 type Snapshot = {
@@ -58,6 +59,9 @@ export function ProjectEditor({
   const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
   const [snapshotLabel, setSnapshotLabel] = useState("");
   const [showSaveSnapshot, setShowSaveSnapshot] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [shareToken, setShareToken] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     loadCanvas(
@@ -152,6 +156,18 @@ export function ProjectEditor({
             <History className="mr-1 h-3.5 w-3.5" />
             History
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={async () => {
+              const token = await generateShareToken(projectId);
+              setShareToken(token);
+              setShowShare(true);
+            }}
+          >
+            <Share2 className="mr-1 h-3.5 w-3.5" />
+            Share
+          </Button>
           <Link href={`/projects/${projectId}/export`}>
             <Button variant="outline" size="sm">
               Export
@@ -221,6 +237,77 @@ export function ProjectEditor({
               ))}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Dialog */}
+      <Dialog open={showShare} onOpenChange={setShowShare}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Share project</DialogTitle>
+          </DialogHeader>
+          {shareToken && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Anyone with this command can pull your architecture into their project:
+              </p>
+              <div className="rounded-md bg-muted p-3">
+                <p className="mb-2 text-xs font-medium text-muted-foreground">
+                  Pull CLAUDE.md into your project:
+                </p>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 text-xs break-all">
+                    npx architext-cli pull {shareToken}
+                  </code>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`npx architext-cli pull ${shareToken}`);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                  >
+                    {copied ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div className="rounded-md bg-muted p-3">
+                <p className="mb-2 text-xs font-medium text-muted-foreground">Or use curl:</p>
+                <code className="text-xs break-all">
+                  curl {window.location.origin}/api/share/{shareToken}/claude-md &gt; CLAUDE.md
+                </code>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                <p>
+                  Other formats: <code>prompt</code>, <code>prd</code>, <code>sql</code>,{" "}
+                  <code>canvas</code>
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={async () => {
+                await revokeShareToken(projectId);
+                setShareToken(null);
+                setShowShare(false);
+                toast.success("Share link revoked");
+              }}
+            >
+              Revoke access
+            </Button>
+            <Button variant="outline" onClick={() => setShowShare(false)}>
+              Close
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

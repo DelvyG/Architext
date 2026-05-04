@@ -59,6 +59,7 @@ model Project {
   templateSlug String?
   isTemplate   Boolean @default(false)
   isPublic     Boolean @default(false)
+  shareToken   String?  @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
