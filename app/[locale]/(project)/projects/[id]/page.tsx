@@ -14,20 +14,26 @@ export default async function ProjectEditorPage({ params }: Props) {
 
   const session = await requireSession();
 
-  const project = await prisma.project.findFirst({
-    where: { id, ownerId: session.user.id },
-    select: {
-      id: true,
-      name: true,
-      canvas: true,
-      language: true,
-      messages: {
-        orderBy: { createdAt: "asc" },
-        take: 50,
-        select: { role: true, content: true },
+  const [project, activeKey] = await Promise.all([
+    prisma.project.findFirst({
+      where: { id, ownerId: session.user.id },
+      select: {
+        id: true,
+        name: true,
+        canvas: true,
+        language: true,
+        messages: {
+          orderBy: { createdAt: "asc" },
+          take: 50,
+          select: { role: true, content: true },
+        },
       },
-    },
-  });
+    }),
+    prisma.apiKey.findFirst({
+      where: { userId: session.user.id, isActive: true },
+      select: { id: true, provider: true },
+    }),
+  ]);
 
   if (!project) {
     notFound();
@@ -41,6 +47,8 @@ export default async function ProjectEditorPage({ params }: Props) {
       projectName={project.name}
       initialCanvas={canvas}
       initialMessages={project.messages}
+      hasApiKey={!!activeKey}
+      activeProvider={activeKey?.provider}
     />
   );
 }

@@ -20,7 +20,7 @@ import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
 import { saveCanvas } from "./actions";
 import { createSnapshot, getSnapshots, restoreSnapshot } from "./snapshot-actions";
-import { Camera, History } from "lucide-react";
+import { Camera, History, Key } from "lucide-react";
 import { toast } from "sonner";
 
 type Snapshot = {
@@ -35,9 +35,18 @@ type Props = {
   projectName: string;
   initialCanvas: { nodes: unknown[]; edges: unknown[] };
   initialMessages: { role: string; content: string }[];
+  hasApiKey: boolean;
+  activeProvider?: string;
 };
 
-export function ProjectEditor({ projectId, projectName, initialCanvas, initialMessages }: Props) {
+export function ProjectEditor({
+  projectId,
+  projectName,
+  initialCanvas,
+  initialMessages,
+  hasApiKey,
+  activeProvider,
+}: Props) {
   const t = useTranslations("project.editor");
   const loadCanvas = useCanvasStore((s) => s.loadCanvas);
   const setIsSaving = useCanvasStore((s) => s.setIsSaving);
@@ -109,6 +118,25 @@ export function ProjectEditor({ projectId, projectName, initialCanvas, initialMe
 
   return (
     <div className="flex h-screen flex-col">
+      {!hasApiKey && (
+        <div className="flex items-center justify-center gap-3 bg-amber-50 px-4 py-2 text-sm text-amber-800 dark:bg-amber-950 dark:text-amber-200">
+          <Key className="h-4 w-4" />
+          <span>Configure your AI provider key to generate architecture</span>
+          <Link href="/settings/api-keys">
+            <Button size="sm" variant="outline" className="h-7 text-xs">
+              Add API Key
+            </Button>
+          </Link>
+        </div>
+      )}
+      {hasApiKey && activeProvider && (
+        <div className="flex items-center justify-end gap-2 border-b bg-muted/30 px-4 py-1 text-xs text-muted-foreground">
+          <span>AI: {activeProvider}</span>
+          <Link href="/settings/api-keys" className="underline hover:text-foreground">
+            Change
+          </Link>
+        </div>
+      )}
       <header className="flex h-12 shrink-0 items-center gap-4 border-b px-4">
         <Link href="/projects" className="text-sm text-muted-foreground hover:text-foreground">
           {t("backToProjects")}
