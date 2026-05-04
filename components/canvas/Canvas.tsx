@@ -54,7 +54,7 @@ const nodeTypes = {
   Queue: QueueNode,
   Storage: StorageNode,
   SEO: SEONode,
-  Group: GroupNode,
+  // Group: GroupNode, // TODO: Fix Group rendering — currently crashes React Flow
 };
 
 const edgeTypes = {
@@ -125,7 +125,8 @@ function CanvasInner({ onSave }: Props) {
     });
   }
 
-  const rfNodes: Node[] = mapToRfNodes(storeNodes);
+  // Filter out Group nodes until the Group rendering bug is fixed
+  const rfNodes: Node[] = mapToRfNodes(storeNodes.filter((n) => n.type !== "Group"));
 
   const rfEdges: Edge[] = storeEdges.map((e) => ({
     id: e.id,
