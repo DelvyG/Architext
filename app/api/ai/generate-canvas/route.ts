@@ -70,7 +70,18 @@ Block data by blockType:
 - UserFlow: { blockType, name, steps: [{actor, action, target?}] }
 - Auth: { blockType, method: email-password|oauth|magic-link|api-key, roles: [], protects: [] }
 - Job: { blockType, name, trigger: cron|webhook|event, frequency?, action }
-- Note: { blockType, content }`;
+- Security: { blockType, name, policies: ["CORS", "Rate limiting", ...], description? }
+- Cache: { blockType, name, strategy: redis|in-memory|cdn|browser|custom, ttl?, description? }
+- Queue: { blockType, name, broker: "Redis / BullMQ", events: ["order.created", ...], description? }
+- Storage: { blockType, name, provider: "S3", fileTypes: ["image/png", ...], maxSize?, description? }
+- SEO: { blockType, name, strategies: ["Meta tags", "Sitemap", ...], description? }
+- Note: { blockType, content }
+
+LAYOUT: Position nodes in a grid:
+- Row 1 (y=80): DataModels side by side, x starting at 80, spaced 320px apart
+- Row 2 (y=450): Auth + Endpoints side by side
+- Row 3 (y=650): Views side by side
+- Right column (x=1350): Infrastructure blocks (Integration, Security, Cache, Queue, Storage, SEO, Job) stacked, y starting at 80, spaced 130px apart`;
 
     const { text } = await generateText({
       model: client(model),
