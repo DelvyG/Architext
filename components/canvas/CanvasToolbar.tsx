@@ -132,7 +132,7 @@ export function CanvasToolbar() {
   }
 
   return (
-    <div className="absolute left-3 top-3 z-10 flex gap-2">
+    <div className="flex gap-2">
       <DropdownMenu>
         <DropdownMenuTrigger className="inline-flex h-8 items-center gap-1.5 rounded-md border bg-background px-3 text-sm font-medium shadow-sm hover:bg-muted">
           <Plus className="h-4 w-4" />
