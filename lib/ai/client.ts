@@ -57,6 +57,15 @@ export async function getAIClient(userId: string) {
           baseURL: "https://openrouter.ai/api/v1",
         }),
       };
+    case "deepseek":
+      return {
+        provider,
+        model: "deepseek-chat",
+        client: createOpenAI({
+          apiKey: secret,
+          baseURL: "https://api.deepseek.com",
+        }),
+      };
     case "ollama":
       return {
         provider,

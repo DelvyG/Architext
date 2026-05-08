@@ -31,6 +31,14 @@ export const PROVIDERS = {
     needsKey: true,
     baseUrlRequired: false,
   },
+  deepseek: {
+    label: "DeepSeek",
+    models: ["deepseek-chat", "deepseek-reasoner"],
+    keyPlaceholder: "sk-...",
+    docs: "https://platform.deepseek.com/api_keys",
+    needsKey: true,
+    baseUrlRequired: false,
+  },
   ollama: {
     label: "Ollama (local)",
     models: ["llama3.3", "mistral", "codestral"],
