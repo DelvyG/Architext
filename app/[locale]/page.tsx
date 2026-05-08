@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
-import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth/session";
@@ -26,14 +25,11 @@ export default async function HomePage({ params }: Props) {
   setRequestLocale(locale);
 
   const session = await getSession();
-  if (session) {
-    redirect(`/${locale}/projects`);
-  }
 
-  return <Landing locale={locale} />;
+  return <Landing locale={locale} isLoggedIn={!!session} />;
 }
 
-function Landing({ locale }: { locale: string }) {
+function Landing({ locale, isLoggedIn }: { locale: string; isLoggedIn: boolean }) {
   const t = useTranslations("app.landing");
 
   return (
@@ -44,16 +40,26 @@ function Landing({ locale }: { locale: string }) {
           <span className="text-sm font-bold tracking-tight">Architext</span>
           <div className="flex items-center gap-1">
             <LanguageSwitch locale={locale} />
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-muted-foreground text-xs">
-                {t("login")}
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="text-xs h-8">
-                {t("cta").split("—")[0]?.trim() ?? t("cta")}
-              </Button>
-            </Link>
+            {isLoggedIn ? (
+              <Link href="/projects">
+                <Button size="sm" className="text-xs h-8">
+                  {t("dashboard")}
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground text-xs">
+                    {t("login")}
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" className="text-xs h-8">
+                    {t("cta").split("—")[0]?.trim() ?? t("cta")}
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>

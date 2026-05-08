@@ -3,7 +3,38 @@
     "title": "Architext",
     "description": "Diseña tu arquitectura de software visualmente antes de codear con IA",
     "getStarted": "Comenzar",
-    "signIn": "Iniciar sesión"
+    "signIn": "Iniciar sesión",
+    "landing": {
+      "hero": "Diseña antes de codear.",
+      "heroSub": "El planificador de arquitectura open-source que le da a tu IA el contexto que necesita para construir bien tu app.",
+      "cta": "Empieza a diseñar — es gratis",
+      "login": "Iniciar sesión",
+      "dashboard": "Panel",
+      "whyTitle": "¿Por qué planificar tu arquitectura?",
+      "why1Title": "Gasta menos tokens",
+      "why1Desc": "Un blueprint claro hace que tu asistente IA escriba mejor código al primer intento. Sin ir y volver.",
+      "why2Title": "Ve el panorama completo",
+      "why2Desc": "Modelos, endpoints, vistas, flujos de auth — todo conectado en un canvas visual antes de escribir una línea de código.",
+      "why3Title": "Exporta a cualquier herramienta IA",
+      "why3Desc": "Genera prompts listos para usar, archivos CLAUDE.md, PRDs y esquemas SQL. Compatible con Claude Code, Cursor y más.",
+      "howTitle": "Cómo funciona",
+      "how1Title": "1. Describe tu proyecto",
+      "how1Desc": "Dile a la IA qué quieres construir en lenguaje natural.",
+      "how2Title": "2. Revisa el canvas",
+      "how2Desc": "La IA genera una arquitectura visual. Arrastra, conecta y refina bloques.",
+      "how3Title": "3. Exporta y construye",
+      "how3Desc": "Exporta el blueprint y aliméntalo a tu herramienta de código IA favorita.",
+      "openSource": "Open source",
+      "openSourceDesc": "Licencia MIT. Hospédalo tú, haz fork, contribuye.",
+      "free": "Gratis para siempre",
+      "freeDesc": "Usa tu propia API key. Sin suscripciones, sin límites de uso de nuestra parte.",
+      "private": "Tus datos, tu servidor",
+      "privateDesc": "Auto-hospedable. Tu arquitectura se queda en tu infraestructura.",
+      "finalCta": "¿Listo para planificar tu próximo proyecto?",
+      "finalCtaButton": "Comienza gratis",
+      "footer": "Open source bajo licencia MIT.",
+      "footerGithub": "GitHub"
+    }
   },
   "auth": {
     "login": {
@@ -25,9 +56,14 @@
       "password": "Contraseña",
       "passwordHint": "Al menos 8 caracteres",
       "submit": "Crear cuenta",
+      "submitting": "Creando...",
       "hasAccount": "¿Ya tienes cuenta?",
       "loginLink": "Inicia sesión",
-      "error": "No se pudo crear la cuenta"
+      "error": "No se pudo crear la cuenta",
+      "verifyTitle": "Revisa tu email",
+      "verifySubtitle": "Enviamos un enlace de verificación a {email}. Haz clic en el enlace para activar tu cuenta.",
+      "resendEmail": "Reenviar email de verificación",
+      "backToLogin": "Volver a iniciar sesión"
     },
     "signOut": "Cerrar sesión"
   },
@@ -46,7 +82,28 @@
       "deleteDescription": "Esta acción no se puede deshacer.",
       "delete": "Eliminar",
       "cancel": "Cancelar",
-      "rename": "Renombrar"
+      "rename": "Renombrar",
+      "share": "Compartir",
+      "limitReached": "Alcanzaste el límite de 12 proyectos. Elimina uno primero.",
+      "shareDialog": {
+        "title": "Compartir proyecto",
+        "description": "Ingresa el email de la persona con quien quieres compartir este proyecto. Recibirá una copia.",
+        "email": "Correo electrónico",
+        "emailPlaceholder": "colega@ejemplo.com",
+        "send": "Enviar invitación",
+        "sending": "Enviando...",
+        "success": "¡Invitación enviada!",
+        "errorSelf": "No puedes compartir un proyecto contigo mismo.",
+        "errorAlready": "Este proyecto ya fue compartido con este email.",
+        "errorGeneric": "No se pudo compartir el proyecto."
+      },
+      "pendingShares": {
+        "title": "Compartidos contigo",
+        "from": "De {name}",
+        "accept": "Aceptar",
+        "reject": "Rechazar",
+        "limitReached": "Necesitas eliminar un proyecto antes de aceptar (12/12)."
+      }
     },
     "newProject": {
       "title": "Nuevo proyecto",
@@ -60,14 +117,45 @@
       "templateBlank": "Proyecto vacío",
       "templateComingSoon": "Próximamente",
       "create": "Crear proyecto",
-      "creating": "Creando..."
+      "creating": "Creando...",
+      "limitReached": "Alcanzaste el límite de 12 proyectos. Elimina uno para crear otro."
     },
     "settings": {
       "title": "Configuración",
       "profile": "Perfil",
       "apiKeys": "Claves API",
       "account": "Cuenta",
-      "comingSoon": "Próximamente"
+      "profileForm": {
+        "title": "Perfil",
+        "description": "Tu información pública.",
+        "name": "Nombre",
+        "namePlaceholder": "Tu nombre",
+        "email": "Email",
+        "emailHint": "Para cambiar tu email, ve a la pestaña Cuenta.",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "saved": "Perfil actualizado.",
+        "errorSave": "No se pudo actualizar el perfil."
+      },
+      "securityForm": {
+        "passwordTitle": "Cambiar contraseña",
+        "passwordDescription": "Actualiza tu contraseña. Seguirás con sesión en este dispositivo.",
+        "currentPassword": "Contraseña actual",
+        "newPassword": "Nueva contraseña",
+        "passwordHint": "Al menos 8 caracteres.",
+        "changePassword": "Cambiar contraseña",
+        "saving": "Guardando...",
+        "passwordSuccess": "Contraseña cambiada.",
+        "passwordError": "No se pudo cambiar la contraseña. Verifica tu contraseña actual.",
+        "emailTitle": "Cambiar email",
+        "emailDescription": "Tu email actual es {email}. Se enviará un enlace de verificación a la nueva dirección.",
+        "newEmail": "Nuevo email",
+        "newEmailPlaceholder": "nuevoemail@ejemplo.com",
+        "changeEmail": "Enviar verificación",
+        "emailSuccess": "Email de verificación enviado. Revisa tu nueva bandeja.",
+        "emailError": "No se pudo enviar la verificación. El email podría estar en uso.",
+        "emailSentMessage": "Enviamos un enlace de verificación a tu nuevo email. Haz clic en el enlace para confirmar el cambio."
+      }
     }
   },
   "project": {

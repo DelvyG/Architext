@@ -3,7 +3,38 @@
     "title": "Architext",
     "description": "Design your software architecture visually before coding with AI",
     "getStarted": "Get started",
-    "signIn": "Sign in"
+    "signIn": "Sign in",
+    "landing": {
+      "hero": "Design before you code.",
+      "heroSub": "The open-source architecture planner that gives AI the context it needs to build your app right.",
+      "cta": "Start designing — it's free",
+      "login": "Sign in",
+      "dashboard": "Dashboard",
+      "whyTitle": "Why plan your architecture?",
+      "why1Title": "Spend less tokens",
+      "why1Desc": "A clear blueprint means your AI assistant writes better code on the first try. No more back-and-forth.",
+      "why2Title": "See the full picture",
+      "why2Desc": "Models, endpoints, views, auth flows — all connected on a visual canvas before a single line of code.",
+      "why3Title": "Export to any AI tool",
+      "why3Desc": "Generate ready-to-use prompts, CLAUDE.md files, PRDs, and SQL schemas. Works with Claude Code, Cursor, and more.",
+      "howTitle": "How it works",
+      "how1Title": "1. Describe your project",
+      "how1Desc": "Tell the AI what you want to build in plain language.",
+      "how2Title": "2. Review the canvas",
+      "how2Desc": "The AI generates a visual architecture. Drag, connect, and refine blocks.",
+      "how3Title": "3. Export and build",
+      "how3Desc": "Export the blueprint and feed it to your favorite AI coding tool.",
+      "openSource": "Open source",
+      "openSourceDesc": "MIT licensed. Self-host it, fork it, contribute to it.",
+      "free": "Free forever",
+      "freeDesc": "Bring your own API key. No subscriptions, no usage limits from us.",
+      "private": "Your data, your server",
+      "privateDesc": "Self-hostable. Your architecture stays on your infrastructure.",
+      "finalCta": "Ready to plan your next project?",
+      "finalCtaButton": "Get started for free",
+      "footer": "Open source under MIT license.",
+      "footerGithub": "GitHub"
+    }
   },
   "auth": {
     "login": {
@@ -25,9 +56,14 @@
       "password": "Password",
       "passwordHint": "At least 8 characters",
       "submit": "Create account",
+      "submitting": "Creating...",
       "hasAccount": "Already have an account?",
       "loginLink": "Sign in",
-      "error": "Could not create account"
+      "error": "Could not create account",
+      "verifyTitle": "Check your email",
+      "verifySubtitle": "We sent a verification link to {email}. Click the link to activate your account.",
+      "resendEmail": "Resend verification email",
+      "backToLogin": "Back to sign in"
     },
     "signOut": "Sign out"
   },
@@ -46,7 +82,28 @@
       "deleteDescription": "This action cannot be undone.",
       "delete": "Delete",
       "cancel": "Cancel",
-      "rename": "Rename"
+      "rename": "Rename",
+      "share": "Share",
+      "limitReached": "You've reached the limit of 12 projects. Delete one first.",
+      "shareDialog": {
+        "title": "Share project",
+        "description": "Enter the email of the person you want to share this project with. They'll receive a copy.",
+        "email": "Email address",
+        "emailPlaceholder": "colleague@example.com",
+        "send": "Send invitation",
+        "sending": "Sending...",
+        "success": "Invitation sent!",
+        "errorSelf": "You can't share a project with yourself.",
+        "errorAlready": "This project was already shared with this email.",
+        "errorGeneric": "Could not share the project."
+      },
+      "pendingShares": {
+        "title": "Shared with you",
+        "from": "From {name}",
+        "accept": "Accept",
+        "reject": "Reject",
+        "limitReached": "You need to delete a project before accepting (12/12)."
+      }
     },
     "newProject": {
       "title": "New project",
@@ -60,14 +117,45 @@
       "templateBlank": "Blank project",
       "templateComingSoon": "Coming soon",
       "create": "Create project",
-      "creating": "Creating..."
+      "creating": "Creating...",
+      "limitReached": "You've reached the limit of 12 projects. Delete one to create a new one."
     },
     "settings": {
       "title": "Settings",
       "profile": "Profile",
       "apiKeys": "API Keys",
       "account": "Account",
-      "comingSoon": "Coming soon"
+      "profileForm": {
+        "title": "Profile",
+        "description": "Your public display information.",
+        "name": "Name",
+        "namePlaceholder": "Your name",
+        "email": "Email",
+        "emailHint": "To change your email, go to the Account tab.",
+        "save": "Save",
+        "saving": "Saving...",
+        "saved": "Profile updated.",
+        "errorSave": "Could not update profile."
+      },
+      "securityForm": {
+        "passwordTitle": "Change password",
+        "passwordDescription": "Update your password. You'll stay signed in on this device.",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "passwordHint": "At least 8 characters.",
+        "changePassword": "Change password",
+        "saving": "Saving...",
+        "passwordSuccess": "Password changed.",
+        "passwordError": "Could not change password. Check your current password.",
+        "emailTitle": "Change email",
+        "emailDescription": "Your current email is {email}. A verification link will be sent to the new address.",
+        "newEmail": "New email",
+        "newEmailPlaceholder": "newemail@example.com",
+        "changeEmail": "Send verification",
+        "emailSuccess": "Verification email sent. Check your new inbox.",
+        "emailError": "Could not send verification. The email may already be in use.",
+        "emailSentMessage": "We sent a verification link to your new email. Click the link to confirm the change."
+      }
     }
   },
   "project": {
