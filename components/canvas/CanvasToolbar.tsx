@@ -94,7 +94,7 @@ export function CanvasToolbar() {
   const nodes = useCanvasStore((s) => s.nodes);
   const updateNodePosition = useCanvasStore((s) => s.updateNodePosition);
   const deleteNode = useCanvasStore((s) => s.deleteNode);
-  const { getNodes, fitView } = useReactFlow();
+  const { getNodes, setViewport } = useReactFlow();
 
   function handleAddBlock(type: BlockType) {
     counter++;
@@ -159,7 +159,10 @@ export function CanvasToolbar() {
       });
     });
 
-    setTimeout(() => fitView({ padding: 0.1, duration: 300 }), 50);
+    // Position viewport at top-left of content instead of centering
+    setTimeout(() => {
+      setViewport({ x: 20, y: 10, zoom: 0.85 }, { duration: 300 });
+    }, 50);
     toast.success("Backend → Frontend → Infrastructure");
   }
 
