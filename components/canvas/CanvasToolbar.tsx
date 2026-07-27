@@ -31,7 +31,7 @@ import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { BlockType } from "@/lib/blocks/schemas";
 import { toast } from "sonner";
 import { toPng, toSvg } from "html-to-image";
-import { getNodesBounds, getViewportForBounds, useReactFlow } from "@xyflow/react";
+import { getNodesBounds, useReactFlow } from "@xyflow/react";
 
 const BLOCK_CATEGORIES = [
   {
@@ -103,6 +103,18 @@ export function CanvasToolbar() {
     addNode(type, { x, y });
   }
 
+  function estimateNodeHeight(node: (typeof nodes)[number]): number {
+    if (node.type === "DataModel") {
+      const fields = (node.data as { fields?: unknown[] }).fields?.length ?? 0;
+      return 90 + fields * 28;
+    }
+    if (node.type === "UserFlow") {
+      const steps = (node.data as { steps?: unknown[] }).steps?.length ?? 0;
+      return 80 + steps * 24;
+    }
+    return 110;
+  }
+
   function handleAutoLayout() {
     // Remove old headers
     const oldHeaders = nodes
@@ -110,9 +122,22 @@ export function CanvasToolbar() {
       .map((n) => n.id);
     for (const id of oldHeaders) deleteNode(id);
 
-    const COL_GAP = 350;
-    const ROW_GAP = 50;
-    const TYPE_GAP = 80;
+    const ROW_GAP = 40;
+    const TYPE_GAP = 60;
+    const COL_X_START = 80;
+    const COL_WIDTH = 320;
+    const COL_SPACING = 60;
+    const Y_START = 80;
+
+    // Calculate column X positions based on actual widths
+    const colPositions: number[] = [];
+    let currentX = COL_X_START;
+    for (let i = 0; i < LAYOUT_COLUMNS.length; i++) {
+      colPositions.push(currentX);
+      // DataModel column needs more width
+      const colWidth = i === 0 ? COL_WIDTH + 40 : COL_WIDTH;
+      currentX += colWidth + COL_SPACING;
+    }
 
     LAYOUT_COLUMNS.forEach((col, colIdx) => {
       const colNodes = nodes.filter(
@@ -120,8 +145,8 @@ export function CanvasToolbar() {
       );
       if (colNodes.length === 0) return;
 
-      const colX = 150 + colIdx * COL_GAP;
-      let y = 120;
+      const colX = colPositions[colIdx] ?? COL_X_START;
+      let y = Y_START;
 
       colNodes.sort((a, b) => col.types.indexOf(a.type) - col.types.indexOf(b.type));
 
@@ -129,12 +154,7 @@ export function CanvasToolbar() {
       colNodes.forEach((node) => {
         if (prevType && node.type !== prevType) y += TYPE_GAP;
         updateNodePosition(node.id, { x: colX, y });
-
-        const h =
-          node.type === "DataModel"
-            ? 90 + ((node.data as { fields?: unknown[] }).fields?.length ?? 0) * 28
-            : 110;
-        y += h + ROW_GAP;
+        y += estimateNodeHeight(node) + ROW_GAP;
         prevType = node.type;
       });
     });
@@ -152,21 +172,24 @@ export function CanvasToolbar() {
     const el = document.querySelector(".react-flow__viewport") as HTMLElement;
     if (!el) return;
 
-    const padding = 50;
+    const padding = 40;
     const bounds = getNodesBounds(flowNodes);
-    const width = bounds.width + padding * 2;
-    const height = bounds.height + padding * 2;
-    const viewport = getViewportForBounds(bounds, width, height, 0.5, 2, padding);
+    const scale = 1;
+    const width = bounds.width * scale + padding * 2;
+    const height = bounds.height * scale + padding * 2;
+    const tx = -bounds.x * scale + padding;
+    const ty = -bounds.y * scale + padding;
 
     const isDark = document.documentElement.classList.contains("dark");
     const opts = {
       backgroundColor: isDark ? "#1a1a1a" : "#ffffff",
       width,
       height,
+      pixelRatio: 2,
       style: {
         width: String(width),
         height: String(height),
-        transform: `translate(${viewport.x}px, ${viewport.y}px) scale(${viewport.zoom})`,
+        transform: `translate(${tx}px, ${ty}px) scale(${scale})`,
       },
     };
 
