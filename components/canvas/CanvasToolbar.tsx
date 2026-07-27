@@ -94,7 +94,7 @@ export function CanvasToolbar() {
   const nodes = useCanvasStore((s) => s.nodes);
   const updateNodePosition = useCanvasStore((s) => s.updateNodePosition);
   const deleteNode = useCanvasStore((s) => s.deleteNode);
-  const { getNodes } = useReactFlow();
+  const { getNodes, fitView } = useReactFlow();
 
   function handleAddBlock(type: BlockType) {
     counter++;
@@ -159,6 +159,7 @@ export function CanvasToolbar() {
       });
     });
 
+    setTimeout(() => fitView({ padding: 0.1, duration: 300 }), 50);
     toast.success("Backend → Frontend → Infrastructure");
   }
 
