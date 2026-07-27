@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth/client";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Key } from "lucide-react";
 
 type Props = {
@@ -61,6 +62,7 @@ export function DashboardHeader({ user, hasApiKey }: Props) {
               API Keys
             </Button>
           </Link>
+          <ThemeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger className="inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm hover:bg-muted">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">

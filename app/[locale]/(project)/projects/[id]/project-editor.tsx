@@ -22,7 +22,8 @@ import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
 import { saveCanvas } from "./actions";
 import { createSnapshot, getSnapshots, restoreSnapshot } from "./snapshot-actions";
 import { generateShareToken, revokeShareToken } from "./share-actions";
-import { Camera, History, Key, Share2, Copy, Check, Layers } from "lucide-react";
+import { Camera, History, Key, Share2, Copy, Check, Layers, Download } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { toast } from "sonner";
 
 type Snapshot = {
@@ -179,6 +180,7 @@ export function ProjectEditor({
               Export
             </Button>
           </Link>
+          <ThemeToggle />
         </div>
       </header>
       <ResizablePanelGroup orientation="horizontal" className="flex-1">

@@ -117,6 +117,17 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.dark .react-flow {
+  --xy-background-color: oklch(0.145 0 0);
+  --xy-node-border: oklch(1 0 0 / 10%);
+  --xy-edge-stroke: oklch(0.556 0 0);
+  --xy-minimap-background: oklch(0.205 0 0);
+  --xy-minimap-mask-background: oklch(0.145 0 0 / 70%);
+  --xy-controls-button-background: oklch(0.269 0 0);
+  --xy-controls-button-color: oklch(0.985 0 0);
+  --xy-controls-button-border-color: oklch(1 0 0 / 10%);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
