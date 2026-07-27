@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
-import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
-import { Send, AlertTriangle, Loader2, Paperclip, X, FileText } from "lucide-react";
+import type { CanvasNode, CanvasEdge, BlockType, ConnectionType } from "@/lib/blocks/schemas";
+import { Send, AlertTriangle, Loader2, Paperclip, X, FileText, Wand2, Check } from "lucide-react";
+import { toast } from "sonner";
 
 type Props = {
   projectId: string;
@@ -16,6 +17,39 @@ type Props = {
 
 const PROMPT_WARN_CHARS = 4000;
 const ACCEPTED_FILE_TYPES = ".pdf,.md,.txt";
+
+type CanvasCommand =
+  | {
+      op: "addNode";
+      type: string;
+      id: string;
+      position: { x: number; y: number };
+      data: Record<string, unknown>;
+    }
+  | { op: "updateNode"; id: string; data: Record<string, unknown> }
+  | { op: "deleteNode"; id: string }
+  | { op: "addEdge"; source: string; target: string; edgeType: string }
+  | { op: "deleteEdge"; id: string };
+
+function extractCanvasCommands(text: string): CanvasCommand[] | null {
+  const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (!match?.[1]) return null;
+
+  try {
+    const parsed = JSON.parse(match[1].trim());
+    if (parsed.canvasCommands && Array.isArray(parsed.canvasCommands)) {
+      return parsed.canvasCommands;
+    }
+  } catch {
+    // Not valid JSON or not canvas commands
+  }
+  return null;
+}
+
+function getMessageDisplayText(text: string): string {
+  // Remove the JSON block from display, show only the explanation
+  return text.replace(/```(?:json)?\s*\{[\s\S]*?"canvasCommands"[\s\S]*?\}[\s\S]*?```/g, "").trim();
+}
 
 function GeneratingIndicator({ elapsed }: { elapsed: number }) {
   const t = useTranslations("project.chat");
@@ -43,11 +77,17 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
   const t = useTranslations("project.chat");
   const nodes = useCanvasStore((s) => s.nodes);
   const loadCanvas = useCanvasStore((s) => s.loadCanvas);
+  const addNode = useCanvasStore((s) => s.addNode);
+  const updateNode = useCanvasStore((s) => s.updateNode);
+  const deleteNode = useCanvasStore((s) => s.deleteNode);
+  const addEdge = useCanvasStore((s) => s.addEdge);
+  const deleteEdge = useCanvasStore((s) => s.deleteEdge);
   const [inputValue, setInputValue] = useState("");
   const [generating, setGenerating] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [attachedFile, setAttachedFile] = useState<{ name: string; text: string } | null>(null);
   const [parsingFile, setParsingFile] = useState(false);
+  const [appliedCommandIds, setAppliedCommandIds] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isEmpty = nodes.length === 0;
@@ -80,6 +120,64 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
     }, 1000);
     return () => clearInterval(interval);
   }, [generating]);
+
+  const applyCommands = useCallback(
+    (commands: CanvasCommand[], msgId: string) => {
+      let added = 0;
+      let updated = 0;
+      let deleted = 0;
+      const idMap = new Map<string, string>();
+
+      for (const cmd of commands) {
+        switch (cmd.op) {
+          case "addNode": {
+            const storeNodes = useCanvasStore.getState().nodes;
+            addNode(cmd.type as BlockType, cmd.position);
+            const newNodes = useCanvasStore.getState().nodes;
+            const newNode = newNodes.find((n) => !storeNodes.some((o) => o.id === n.id));
+            if (newNode) {
+              idMap.set(cmd.id, newNode.id);
+              updateNode(newNode.id, cmd.data as never);
+            }
+            added++;
+            break;
+          }
+          case "updateNode": {
+            const realId = idMap.get(cmd.id) || cmd.id;
+            updateNode(realId, cmd.data as never);
+            updated++;
+            break;
+          }
+          case "deleteNode": {
+            deleteNode(cmd.id);
+            deleted++;
+            break;
+          }
+          case "addEdge": {
+            const realSource = idMap.get(cmd.source) || cmd.source;
+            const realTarget = idMap.get(cmd.target) || cmd.target;
+            addEdge(realSource, realTarget, cmd.edgeType as ConnectionType);
+            added++;
+            break;
+          }
+          case "deleteEdge": {
+            deleteEdge(cmd.id);
+            deleted++;
+            break;
+          }
+        }
+      }
+
+      setAppliedCommandIds((prev) => new Set([...prev, msgId]));
+
+      const parts: string[] = [];
+      if (added > 0) parts.push(`${added} added`);
+      if (updated > 0) parts.push(`${updated} updated`);
+      if (deleted > 0) parts.push(`${deleted} removed`);
+      toast.success(`Canvas updated: ${parts.join(", ")}`);
+    },
+    [addNode, updateNode, deleteNode, addEdge, deleteEdge],
+  );
 
   async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -206,19 +304,49 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
             </div>
           </div>
         )}
-        {messages.map((msg) => (
-          <div key={msg.id} className={`mb-3 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+        {messages.map((msg) => {
+          const rawText = getMessageText(msg);
+          const commands = msg.role === "assistant" ? extractCanvasCommands(rawText) : null;
+          const displayText = commands ? getMessageDisplayText(rawText) : rawText;
+          const isApplied = appliedCommandIds.has(msg.id);
+
+          return (
             <div
-              className={`inline-block max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
-                msg.role === "user"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-foreground"
-              }`}
+              key={msg.id}
+              className={`mb-3 ${msg.role === "user" ? "text-right" : "text-left"}`}
             >
-              {getMessageText(msg)}
+              <div
+                className={`inline-block max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-wrap ${
+                  msg.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-foreground"
+                }`}
+              >
+                {displayText}
+              </div>
+              {commands && commands.length > 0 && (
+                <div className="mt-1.5">
+                  {isApplied ? (
+                    <span className="inline-flex items-center gap-1 rounded-md border border-green-200 bg-green-50 px-2.5 py-1 text-xs text-green-700 dark:border-green-800 dark:bg-green-950 dark:text-green-400">
+                      <Check className="h-3 w-3" />
+                      {t("changesApplied")}
+                    </span>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 gap-1.5 text-xs"
+                      onClick={() => applyCommands(commands, msg.id)}
+                    >
+                      <Wand2 className="h-3 w-3" />
+                      {t("applyChanges", { count: commands.length })}
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
         {generating && <GeneratingIndicator elapsed={elapsedSeconds} />}
         {status === "streaming" && !generating && (
           <div className="mb-3 text-left">

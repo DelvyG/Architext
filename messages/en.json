@@ -181,7 +181,9 @@
       "attachFile": "Attach file (PDF, MD, TXT)",
       "fileHint": "You can also attach a PDF or Markdown file with your PRD",
       "parsingFile": "Reading file...",
-      "placeholderWithFile": "Add instructions or send the file as-is..."
+      "placeholderWithFile": "Add instructions or send the file as-is...",
+      "applyChanges": "Apply {count} changes to canvas",
+      "changesApplied": "Changes applied"
     }
   }
 }

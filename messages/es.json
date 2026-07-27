@@ -181,7 +181,9 @@
       "attachFile": "Adjuntar archivo (PDF, MD, TXT)",
       "fileHint": "También puedes adjuntar un PDF o Markdown con tu PRD",
       "parsingFile": "Leyendo archivo...",
-      "placeholderWithFile": "Agrega instrucciones o envía el archivo tal cual..."
+      "placeholderWithFile": "Agrega instrucciones o envía el archivo tal cual...",
+      "applyChanges": "Aplicar {count} cambios al canvas",
+      "changesApplied": "Cambios aplicados"
     }
   }
 }
