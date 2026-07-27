@@ -177,7 +177,11 @@
       "errorTimeout": "The request took too long. Try with a shorter prompt or check your API key.",
       "errorGeneric": "Something went wrong. Please try again.",
       "errorTooLong": "Your prompt is very long ({chars} characters). This may cause timeouts. Consider splitting it into a shorter initial prompt, then refine in chat.",
-      "charLimit": "{chars} characters"
+      "charLimit": "{chars} characters",
+      "attachFile": "Attach file (PDF, MD, TXT)",
+      "fileHint": "You can also attach a PDF or Markdown file with your PRD",
+      "parsingFile": "Reading file...",
+      "placeholderWithFile": "Add instructions or send the file as-is..."
     }
   }
 }

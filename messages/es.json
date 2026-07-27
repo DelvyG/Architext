@@ -177,7 +177,11 @@
       "errorTimeout": "La solicitud tardó demasiado. Intenta con un prompt más corto o verifica tu API key.",
       "errorGeneric": "Algo salió mal. Intenta de nuevo.",
       "errorTooLong": "Tu prompt es muy largo ({chars} caracteres). Esto puede causar tiempos de espera. Considera usar un prompt inicial más corto y luego refinar en el chat.",
-      "charLimit": "{chars} caracteres"
+      "charLimit": "{chars} caracteres",
+      "attachFile": "Adjuntar archivo (PDF, MD, TXT)",
+      "fileHint": "También puedes adjuntar un PDF o Markdown con tu PRD",
+      "parsingFile": "Leyendo archivo...",
+      "placeholderWithFile": "Agrega instrucciones o envía el archivo tal cual..."
     }
   }
 }
