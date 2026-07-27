@@ -29,27 +29,38 @@ export function NewProjectForm() {
   const t = useTranslations("dashboard.newProject");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [template, setTemplate] = useState("blank");
   const [language, setLanguage] = useState("en");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError("");
     setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const description = (formData.get("description") as string) || undefined;
+    try {
+      const formData = new FormData(e.currentTarget);
+      const name = formData.get("name") as string;
+      const description = (formData.get("description") as string) || undefined;
 
-    const result = await createProject({
-      name,
-      description,
-      language,
-      templateSlug: template === "blank" ? undefined : template,
-    });
+      const result = await createProject({
+        name,
+        description,
+        language,
+        templateSlug: template === "blank" ? undefined : template,
+      });
 
-    if (result?.id) {
-      router.push(`/projects/${result.id}`);
-    } else {
+      if (result?.id) {
+        router.push(`/projects/${result.id}`);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      if (err instanceof Error && err.message === "PROJECT_LIMIT_REACHED") {
+        setError(t("limitReached"));
+      } else {
+        setError("Something went wrong");
+      }
       setLoading(false);
     }
   }
@@ -105,6 +116,7 @@ export function NewProjectForm() {
             </div>
           </div>
 
+          {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? t("creating") : t("create")}
           </Button>

@@ -6,6 +6,7 @@ import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/client";
 import { requireSession } from "@/lib/auth/session";
+import { sendProjectShareEmail } from "@/lib/email/resend";
 
 const TEMPLATE_SLUGS = [
   "saas-b2b",
@@ -33,9 +34,18 @@ const CreateProjectSchema = z.object({
   templateSlug: z.string().optional(),
 });
 
+const MAX_PROJECTS_PER_USER = 12;
+
 export async function createProject(raw: unknown) {
   const input = CreateProjectSchema.parse(raw);
   const session = await requireSession();
+
+  const count = await prisma.project.count({
+    where: { ownerId: session.user.id },
+  });
+  if (count >= MAX_PROJECTS_PER_USER) {
+    throw new Error("PROJECT_LIMIT_REACHED");
+  }
 
   let canvas: Prisma.InputJsonValue = { nodes: [], edges: [] };
   if (input.templateSlug && TEMPLATE_SLUGS.includes(input.templateSlug)) {
@@ -98,6 +108,13 @@ export async function duplicateProject(projectId: string, newName?: string) {
   });
   if (!original) throw new Error("Project not found");
 
+  const count = await prisma.project.count({
+    where: { ownerId: session.user.id },
+  });
+  if (count >= MAX_PROJECTS_PER_USER) {
+    throw new Error("PROJECT_LIMIT_REACHED");
+  }
+
   const project = await prisma.project.create({
     data: {
       name: newName || `${original.name} (copy)`,
@@ -111,4 +128,132 @@ export async function duplicateProject(projectId: string, newName?: string) {
   });
 
   return project;
+}
+
+// ─── Project sharing ──────────────────────────────────────────
+
+const ShareProjectSchema = z.object({
+  projectId: z.string().min(1),
+  email: z.email(),
+});
+
+export async function shareProject(raw: unknown) {
+  const input = ShareProjectSchema.parse(raw);
+  const session = await requireSession();
+
+  if (input.email.toLowerCase() === session.user.email.toLowerCase()) {
+    throw new Error("CANNOT_SHARE_WITH_SELF");
+  }
+
+  const project = await prisma.project.findFirst({
+    where: { id: input.projectId, ownerId: session.user.id },
+    select: { id: true, name: true },
+  });
+  if (!project) throw new Error("Project not found");
+
+  const existing = await prisma.projectShare.findUnique({
+    where: {
+      projectId_toEmail: { projectId: project.id, toEmail: input.email.toLowerCase() },
+    },
+  });
+  if (existing) throw new Error("ALREADY_SHARED");
+
+  const recipientUser = await prisma.user.findUnique({
+    where: { email: input.email.toLowerCase() },
+    select: { id: true },
+  });
+
+  await prisma.projectShare.create({
+    data: {
+      projectId: project.id,
+      fromUserId: session.user.id,
+      toEmail: input.email.toLowerCase(),
+    },
+  });
+
+  await sendProjectShareEmail({
+    to: input.email.toLowerCase(),
+    fromName: session.user.name || session.user.email,
+    projectName: project.name,
+    hasAccount: !!recipientUser,
+  });
+
+  return { success: true };
+}
+
+export async function getPendingShares() {
+  const session = await requireSession();
+
+  return prisma.projectShare.findMany({
+    where: {
+      toEmail: session.user.email.toLowerCase(),
+      status: "pending",
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      project: { select: { name: true, description: true, language: true } },
+      fromUser: { select: { name: true, email: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function acceptShare(shareId: string) {
+  const session = await requireSession();
+
+  const share = await prisma.projectShare.findFirst({
+    where: {
+      id: shareId,
+      toEmail: session.user.email.toLowerCase(),
+      status: "pending",
+    },
+    include: {
+      project: {
+        select: { name: true, description: true, canvas: true, stack: true, language: true },
+      },
+      fromUser: { select: { name: true } },
+    },
+  });
+  if (!share) throw new Error("Share not found");
+
+  const count = await prisma.project.count({
+    where: { ownerId: session.user.id },
+  });
+  if (count >= MAX_PROJECTS_PER_USER) {
+    throw new Error("PROJECT_LIMIT_REACHED");
+  }
+
+  const [, project] = await prisma.$transaction([
+    prisma.projectShare.update({
+      where: { id: shareId },
+      data: { status: "accepted" },
+    }),
+    prisma.project.create({
+      data: {
+        name: share.project.name,
+        description: share.project.description,
+        canvas: share.project.canvas ?? { nodes: [], edges: [] },
+        stack: share.project.stack ?? undefined,
+        language: share.project.language,
+        ownerId: session.user.id,
+      },
+      select: { id: true },
+    }),
+  ]);
+
+  return project;
+}
+
+export async function rejectShare(shareId: string) {
+  const session = await requireSession();
+
+  await prisma.projectShare.updateMany({
+    where: {
+      id: shareId,
+      toEmail: session.user.email.toLowerCase(),
+      status: "pending",
+    },
+    data: { status: "rejected" },
+  });
 }

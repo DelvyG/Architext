@@ -21,6 +21,8 @@ function extractJson(text: string): string {
   return text;
 }
 
+export const maxDuration = 120;
+
 export async function POST(req: Request) {
   try {
     const session = await requireSession();
@@ -87,6 +89,7 @@ LAYOUT: Position nodes in a grid:
       model: client(model),
       system: system + jsonInstructions,
       messages,
+      maxOutputTokens: 16000,
     });
 
     const jsonStr = extractJson(text);
@@ -106,6 +109,7 @@ LAYOUT: Position nodes in a grid:
             content: `Your JSON was invalid. Fix it and return ONLY valid JSON.`,
           },
         ],
+        maxOutputTokens: 16000,
       });
       const retryJson = extractJson(retryText);
       try {

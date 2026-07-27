@@ -162,6 +162,22 @@
     "editor": {
       "title": "Proyecto: {name}",
       "backToProjects": "Proyectos"
+    },
+    "chat": {
+      "describeProject": "Describe tu proyecto",
+      "describeExample": "Ejemplo: \"Un SaaS para gestión de citas de barbería con WhatsApp y pagos\"",
+      "placeholderEmpty": "Describe tu proyecto...",
+      "placeholderChat": "Pregunta sobre tu arquitectura...",
+      "enterToSend": "Enter para enviar, Shift+Enter para nueva línea",
+      "generatingAnalyzing": "Analizando tu prompt...",
+      "generatingDesigning": "Diseñando la arquitectura...",
+      "generatingBuilding": "Construyendo bloques visuales...",
+      "generatingAlmost": "Ya casi...",
+      "streaming": "Pensando...",
+      "errorTimeout": "La solicitud tardó demasiado. Intenta con un prompt más corto o verifica tu API key.",
+      "errorGeneric": "Algo salió mal. Intenta de nuevo.",
+      "errorTooLong": "Tu prompt es muy largo ({chars} caracteres). Esto puede causar tiempos de espera. Considera usar un prompt inicial más corto y luego refinar en el chat.",
+      "charLimit": "{chars} caracteres"
     }
   }
 }

@@ -3,21 +3,48 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { useCanvasStore } from "@/lib/stores/canvas-store";
 import type { CanvasNode, CanvasEdge } from "@/lib/blocks/schemas";
-import { Send } from "lucide-react";
+import { Send, AlertTriangle, Loader2 } from "lucide-react";
 
 type Props = {
   projectId: string;
   initialMessages: { role: string; content: string }[];
 };
 
+const PROMPT_WARN_CHARS = 4000;
+
+function GeneratingIndicator({ elapsed }: { elapsed: number }) {
+  const t = useTranslations("project.chat");
+
+  const phase =
+    elapsed < 5
+      ? t("generatingAnalyzing")
+      : elapsed < 15
+        ? t("generatingDesigning")
+        : elapsed < 30
+          ? t("generatingBuilding")
+          : t("generatingAlmost");
+
+  return (
+    <div className="mb-3 text-left">
+      <div className="inline-flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        <span>{phase}</span>
+      </div>
+    </div>
+  );
+}
+
 export function ChatPanel({ projectId, initialMessages }: Props) {
+  const t = useTranslations("project.chat");
   const nodes = useCanvasStore((s) => s.nodes);
   const loadCanvas = useCanvasStore((s) => s.loadCanvas);
   const [inputValue, setInputValue] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isEmpty = nodes.length === 0;
 
@@ -42,21 +69,36 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    if (!generating) return;
+    const interval = setInterval(() => {
+      setElapsedSeconds((s) => s + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [generating]);
+
   async function handleGenerateCanvas(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
+    setElapsedSeconds(0);
     setGenerating(true);
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 110_000);
+
       const res = await fetch("/api/ai/generate-canvas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projectId, prompt: inputValue }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeout);
+
       if (!res.ok) {
-        const data = await res.json();
-        alert(data.error || "Failed to generate");
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || t("errorGeneric"));
         return;
       }
 
@@ -67,6 +109,12 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
         (canvas.edges ?? []) as CanvasEdge[],
       );
       setInputValue("");
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        alert(t("errorTimeout"));
+      } else {
+        alert(t("errorGeneric"));
+      }
     } finally {
       setGenerating(false);
     }
@@ -92,17 +140,16 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
     );
   }
 
+  const showLengthWarning = isEmpty && inputValue.length > PROMPT_WARN_CHARS;
+
   return (
     <div className="flex h-full flex-col">
       <div className="flex-1 overflow-y-auto p-4">
         {messages.length === 0 && isEmpty && (
           <div className="flex h-full items-center justify-center">
             <div className="max-w-xs text-center">
-              <p className="text-sm font-medium">Describe your project</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Example: &quot;A SaaS for barbershop appointment management with WhatsApp and
-                payments&quot;
-              </p>
+              <p className="text-sm font-medium">{t("describeProject")}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("describeExample")}</p>
             </div>
           </div>
         )}
@@ -119,10 +166,12 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
             </div>
           </div>
         ))}
-        {(status === "streaming" || generating) && (
+        {generating && <GeneratingIndicator elapsed={elapsedSeconds} />}
+        {status === "streaming" && !generating && (
           <div className="mb-3 text-left">
-            <div className="inline-block rounded-lg bg-muted px-3 py-2 text-sm">
-              <span className="animate-pulse">...</span>
+            <div className="inline-flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span>{t("streaming")}</span>
             </div>
           </div>
         )}
@@ -141,7 +190,7 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
                 }
               }
             }}
-            placeholder={isEmpty ? "Describe your project..." : "Ask about your architecture..."}
+            placeholder={isEmpty ? t("placeholderEmpty") : t("placeholderChat")}
             disabled={generating}
             rows={3}
             className="flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-50"
@@ -155,9 +204,15 @@ export function ChatPanel({ projectId, initialMessages }: Props) {
             <Send className="h-4 w-4" />
           </Button>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Enter to send, Shift+Enter for new line
-        </p>
+        <div className="mt-1 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">{t("enterToSend")}</p>
+          {showLengthWarning && (
+            <div className="flex items-center gap-1 text-xs text-amber-500">
+              <AlertTriangle className="h-3 w-3" />
+              <span>{t("errorTooLong", { chars: inputValue.length.toLocaleString() })}</span>
+            </div>
+          )}
+        </div>
       </form>
     </div>
   );

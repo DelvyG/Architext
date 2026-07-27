@@ -15,16 +15,18 @@ model User {
   name          String?
   emailVerified Boolean   @default(false)
   image         String?
+  role          String    @default("user")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
-  projects  Project[]
-  apiKeys   ApiKey[]
-  sessions  Session[]
-  accounts  Account[]
+  projects   Project[]
+  apiKeys    ApiKey[]
+  sessions   Session[]
+  accounts   Account[]
+  sharesSent ProjectShare[] @relation("sharesSent")
 
   @@map("users")
 }
@@ -67,6 +69,7 @@ model Project {
   messages  ChatMessage[]
   snapshots CanvasSnapshot[]
   exports   Export[]
+  shares    ProjectShare[]
 
   @@index([ownerId])
   @@index([organizationId])
@@ -124,6 +127,21 @@ model ApiKey {
 
   @@index([userId])
   @@map("api_keys")
+}
+
+model ProjectShare {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fromUserId String
+  fromUser   User    @relation("sharesSent", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toEmail   String
+  status    String   @default("pending") // pending, accepted, rejected
+  createdAt DateTime @default(now())
+
+  @@unique([projectId, toEmail])
+  @@index([toEmail, status])
+  @@map("project_shares")
 }
 
 // ─── better-auth tables ────────────────────────────────────────

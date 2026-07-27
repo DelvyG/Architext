@@ -1,6 +1,9 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { requireSession } from "@/lib/auth/session";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProfileForm } from "./profile-form";
+import { SecurityForm } from "./security-form";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -10,6 +13,7 @@ export default async function SettingsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("dashboard.settings");
+  const session = await requireSession();
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
@@ -23,7 +27,7 @@ export default async function SettingsPage({ params }: Props) {
           <TabsTrigger value="account">{t("account")}</TabsTrigger>
         </TabsList>
         <TabsContent value="profile" className="mt-6">
-          <p className="text-muted-foreground">{t("comingSoon")}</p>
+          <ProfileForm name={session.user.name ?? ""} email={session.user.email} />
         </TabsContent>
         <TabsContent value="api-keys" className="mt-6">
           <p className="text-muted-foreground">
@@ -33,7 +37,7 @@ export default async function SettingsPage({ params }: Props) {
           </p>
         </TabsContent>
         <TabsContent value="account" className="mt-6">
-          <p className="text-muted-foreground">{t("comingSoon")}</p>
+          <SecurityForm email={session.user.email} />
         </TabsContent>
       </Tabs>
     </div>

@@ -8,12 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth/client";
+import { MailCheck } from "lucide-react";
 
 export function SignupForm() {
   const t = useTranslations("auth.signup");
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,6 +32,7 @@ export function SignupForm() {
       name,
       email,
       password,
+      callbackURL: "/projects",
     });
 
     if (authError) {
@@ -37,8 +41,42 @@ export function SignupForm() {
       return;
     }
 
-    router.push("/projects");
-    router.refresh();
+    setRegisteredEmail(email);
+    setEmailSent(true);
+    setLoading(false);
+  }
+
+  async function handleResend() {
+    setLoading(true);
+    await authClient.sendVerificationEmail({
+      email: registeredEmail,
+      callbackURL: "/projects",
+    });
+    setLoading(false);
+  }
+
+  if (emailSent) {
+    return (
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <MailCheck className="h-6 w-6 text-primary" />
+          </div>
+          <CardTitle className="text-2xl">{t("verifyTitle")}</CardTitle>
+          <CardDescription>{t("verifySubtitle", { email: registeredEmail })}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Button variant="outline" className="w-full" onClick={handleResend} disabled={loading}>
+            {t("resendEmail")}
+          </Button>
+          <p className="text-center text-sm text-muted-foreground">
+            <Link href="/login" className="font-medium text-primary hover:underline">
+              {t("backToLogin")}
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
@@ -71,7 +109,7 @@ export function SignupForm() {
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? t("submit") : t("submit")}
+            {loading ? t("submitting") : t("submit")}
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             {t("hasAccount")}{" "}

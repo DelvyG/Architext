@@ -162,6 +162,22 @@
     "editor": {
       "title": "Project: {name}",
       "backToProjects": "Projects"
+    },
+    "chat": {
+      "describeProject": "Describe your project",
+      "describeExample": "Example: \"A SaaS for barbershop appointment management with WhatsApp and payments\"",
+      "placeholderEmpty": "Describe your project...",
+      "placeholderChat": "Ask about your architecture...",
+      "enterToSend": "Enter to send, Shift+Enter for new line",
+      "generatingAnalyzing": "Analyzing your prompt...",
+      "generatingDesigning": "Designing the architecture...",
+      "generatingBuilding": "Building visual blocks...",
+      "generatingAlmost": "Almost there...",
+      "streaming": "Thinking...",
+      "errorTimeout": "The request took too long. Try with a shorter prompt or check your API key.",
+      "errorGeneric": "Something went wrong. Please try again.",
+      "errorTooLong": "Your prompt is very long ({chars} characters). This may cause timeouts. Consider splitting it into a shorter initial prompt, then refine in chat.",
+      "charLimit": "{chars} characters"
     }
   }
 }
