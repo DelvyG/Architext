@@ -128,6 +128,19 @@
   --xy-controls-button-border-color: oklch(1 0 0 / 10%);
 }
 
+/* Prevent FOUC: smooth fade-in covers the brief unstyled flash */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+body {
+  animation: fadeIn 0.15s ease-in;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
